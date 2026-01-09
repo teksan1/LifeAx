@@ -1,54 +1,78 @@
 # 🤖 LifeAx AI Assistant
 
-Beautiful AI chat application powered by Google Gemini API.
+Intelligent AI chat application with machine learning, offline mode, and anonymous AI services.
 
 ## ✨ Features
-- 💬 Beautiful gradient chat UI
-- 🧠 Powered by Google Gemini AI
-- 💾 Conversation memory (last 10 messages)
-- 🎨 Responsive design (mobile & desktop)
-- ⚡ One-command installation & launch
-- 🔄 Auto-reconnects to available API endpoints
+
+- 🧠 **Machine Learning** - Learns your communication style and interests
+- 💾 **Offline Mode** - Works without internet using learned patterns
+- 🌐 **Anonymous AI** - Free AI services (no API key required)
+- 🎯 **Personalized** - Adapts responses based on your preferences
+- 💬 **Beautiful UI** - Gradient chat interface
+- 🔄 **Multi-Source** - Falls back between Gemini, HuggingFace, DuckDuckGo, and offline
 
 ## 🚀 Quick Start
 ```bash
 git clone https://github.com/teksan1/LifeAx.git
 cd LifeAx
-cp .env.example .env
-nano .env  # Add your Gemini API key
 pip install -r backend/requirements.txt
 ./run.sh
 ```
 
-**Get your free Gemini API key:** https://aistudio.google.com/apikey
+**Optional:** Add Gemini API key to `.env` for best results
+- Get free key: https://aistudio.google.com/apikey
 
-The app will automatically start the server and open in your browser at http://127.0.0.1:8000
+## 🧠 Intelligence Features
+
+### Adaptive Learning
+- Detects if you prefer formal/casual/technical language
+- Remembers topics you discuss frequently
+- Personalizes responses over time
+
+### Offline Capabilities
+- Works without internet for basic queries
+- Learns patterns from online conversations
+- Improves the more you use it
+
+### Anonymous AI Services
+1. **Gemini API** (if key provided)
+2. **HuggingFace** (free, anonymous)
+3. **DuckDuckGo AI** (anonymous)
+4. **Offline patterns** (learned responses)
 
 ## 📁 Project Structure
 ```
 LifeAx/
 ├── backend/
 │   ├── app.py           # FastAPI server
-│   ├── ai_engine.py     # Gemini AI integration
+│   ├── ai_engine.py     # Multi-source AI with ML
 │   ├── memory.py        # Conversation memory
-│   ├── requirements.txt # Dependencies
-│   └── data/            # Memory storage
+│   └── data/
+│       ├── memory.json       # Chat history
+│       ├── user_profile.json # Your preferences
+│       └── learned_patterns.json # Offline AI
 ├── frontend/
 │   └── index.html       # Chat UI
-├── .env                 # Your API key (gitignored)
-├── .env.example         # Template
 ├── run.sh               # One-click launcher
 └── README.md
 ```
 
-## 🔧 Manual Setup
-```bash
-# Install dependencies
-pip install -r backend/requirements.txt
+## 🔧 How It Works
 
-# Start server
-cd ~/LifeAx
-PYTHONPATH=backend uvicorn backend.app:app --host 127.0.0.1 --port 8000
+1. **Learns your style** - Tracks formal/casual/technical preferences
+2. **Remembers interests** - Notes topics you discuss
+3. **Tries multiple AI sources** - Gemini → HuggingFace → DuckDuckGo → Offline
+4. **Works offline** - Uses learned patterns when no internet
+5. **Gets smarter** - Improves with every conversation
+
+## 🌐 Usage
+```bash
+# Start the app
+./run.sh
+
+# Access at: http://127.0.0.1:8000
+
+# Stop with: Ctrl+C
 ```
 
 ## 📡 API Endpoints
@@ -57,11 +81,12 @@ PYTHONPATH=backend uvicorn backend.app:app --host 127.0.0.1 --port 8000
 - `POST /chat` - Send messages
 - `GET /health` - Health check
 
-## ⚠️ Security
+## 🔒 Privacy
 
-- Never commit `.env` file
-- Always use `.env.example` as template
-- API keys are automatically protected by `.gitignore`
+- All data stored locally
+- Anonymous AI services (no tracking)
+- API keys never committed (in `.gitignore`)
+- Conversations stay on your device
 
 ## 🤝 Contributing
 
