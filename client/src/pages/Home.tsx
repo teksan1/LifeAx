@@ -1,7 +1,7 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
-import { MessageSquare, Calendar, CheckSquare, Zap, Lightbulb, Bell, ArrowRight } from "lucide-react";
+import { MessageSquare, Calendar, CheckSquare, Zap, Lightbulb, Bell, ArrowRight, ChefHat, Utensils } from "lucide-react";
 import { getLoginUrl } from "@/const";
 
 export default function Home() {
@@ -78,6 +78,24 @@ export default function Home() {
               <Bell size={32} className="mb-3 group-hover:scale-110 transition-transform" />
               <h3 className="font-black uppercase text-lg mb-2">Alerts</h3>
               <p className="text-sm text-muted-foreground group-hover:text-background/70">Stay informed</p>
+            </button>
+
+            <button
+              onClick={() => setLocation("/meals")}
+              className="border-2 border-foreground p-6 bg-background hover:bg-foreground hover:text-background transition-all text-left group"
+            >
+              <ChefHat size={32} className="mb-3 group-hover:scale-110 transition-transform" />
+              <h3 className="font-black uppercase text-lg mb-2">Meal Plans</h3>
+              <p className="text-sm text-muted-foreground group-hover:text-background/70">Plan your meals</p>
+            </button>
+
+            <button
+              onClick={() => setLocation("/prep")}
+              className="border-2 border-foreground p-6 bg-background hover:bg-foreground hover:text-background transition-all text-left group"
+            >
+              <Utensils size={32} className="mb-3 group-hover:scale-110 transition-transform" />
+              <h3 className="font-black uppercase text-lg mb-2">Meal Prep</h3>
+              <p className="text-sm text-muted-foreground group-hover:text-background/70">Track prep sessions</p>
             </button>
           </div>
 

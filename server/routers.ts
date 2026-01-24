@@ -19,6 +19,7 @@ import {
 import { invokeLLM } from "./_core/llm";
 import { TRPCError } from "@trpc/server";
 import { emotionalIntelligenceRouter, mealPlanningRouter, shoppingRouter } from "./routers-enhanced";
+import { mealPrepRouter, mealPrepContainerRouter } from "./routers-meal-prep";
 
 export const appRouter = router({
   system: systemRouter,
@@ -281,6 +282,8 @@ export const appRouter = router({
   emotionalIntelligence: emotionalIntelligenceRouter,
   mealPlanning: mealPlanningRouter,
   shopping: shoppingRouter,
+  mealPrep: mealPrepRouter,
+  mealPrepContainers: mealPrepContainerRouter,
 
   habits: router({
     create: protectedProcedure

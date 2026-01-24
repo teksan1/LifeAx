@@ -209,3 +209,72 @@ export const shoppingListItems = mysqlTable("shopping_list_items", {
 
 export type ShoppingListItem = typeof shoppingListItems.$inferSelect;
 export type InsertShoppingListItem = typeof shoppingListItems.$inferInsert;
+
+
+// Meal prep sessions table
+export const mealPrepSessions = mysqlTable("meal_prep_sessions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  date: timestamp("date").notNull(),
+  duration: int("duration"), // in minutes
+  status: mysqlEnum("status", ["planned", "in_progress", "completed", "cancelled"]).default("planned").notNull(),
+  recipes: text("recipes"), // JSON array of recipe IDs
+  ingredients: text("ingredients"), // JSON array of ingredients
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type MealPrepSession = typeof mealPrepSessions.$inferSelect;
+export type InsertMealPrepSession = typeof mealPrepSessions.$inferInsert;
+
+// Meal prep checklist items
+export const mealPrepChecklist = mysqlTable("meal_prep_checklist", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: int("sessionId").notNull().references(() => mealPrepSessions.id, { onDelete: "cascade" }),
+  task: varchar("task", { length: 255 }).notNull(),
+  completed: int("completed").default(0).notNull(),
+  order: int("order").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type MealPrepChecklist = typeof mealPrepChecklist.$inferSelect;
+export type InsertMealPrepChecklist = typeof mealPrepChecklist.$inferInsert;
+
+// Meal prep progress tracking
+export const mealPrepProgress = mysqlTable("meal_prep_progress", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: int("sessionId").notNull().references(() => mealPrepSessions.id, { onDelete: "cascade" }),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  recipeId: int("recipeId"),
+  status: mysqlEnum("status", ["not_started", "in_progress", "completed"]).default("not_started").notNull(),
+  timeSpent: int("timeSpent"), // in minutes
+  notes: text("notes"),
+  photoUrl: varchar("photoUrl", { length: 500 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type MealPrepProgress = typeof mealPrepProgress.$inferSelect;
+export type InsertMealPrepProgress = typeof mealPrepProgress.$inferInsert;
+
+// Meal prep storage/containers
+export const mealPrepContainers = mysqlTable("meal_prep_containers", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  mealName: varchar("mealName", { length: 255 }).notNull(),
+  quantity: int("quantity").notNull(),
+  containerType: varchar("containerType", { length: 100 }).notNull(), // glass, plastic, etc.
+  prepDate: timestamp("prepDate").notNull(),
+  expiryDate: timestamp("expiryDate").notNull(),
+  location: varchar("location", { length: 100 }).notNull(), // fridge, freezer, etc.
+  notes: text("notes"),
+  photoUrl: varchar("photoUrl", { length: 500 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type MealPrepContainer = typeof mealPrepContainers.$inferSelect;
+export type InsertMealPrepContainer = typeof mealPrepContainers.$inferInsert;

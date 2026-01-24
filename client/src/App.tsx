@@ -11,6 +11,7 @@ import Tasks from "./pages/TasksEnhanced";
 import Notifications from "./pages/Notifications";
 import Habits from "./pages/Habits";
 import MealPlanning from "./pages/MealPlanning";
+import MealPrep from "./pages/MealPrep";
 import Profile from "./pages/Profile";
 
 function Router() {
@@ -24,6 +25,7 @@ function Router() {
       <Route path="/habits" component={Habits} />
       <Route path="/notifications" component={Notifications} />
       <Route path="/meals" component={MealPlanning} />
+      <Route path="/prep" component={MealPrep} />
       <Route path="/profile" component={Profile} />
       <Route path="/404" component={NotFound} />
       {/* Final fallback route */}
