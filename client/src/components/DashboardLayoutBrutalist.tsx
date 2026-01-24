@@ -1,7 +1,7 @@
 import { ReactNode, useState } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { useLocation } from "wouter";
-import { Menu, X, LogOut, MessageSquare, Calendar, CheckSquare, Bell, Flame, User } from "lucide-react";
+import { Menu, X, LogOut, MessageSquare, Calendar, CheckSquare, Bell, Flame, User, ChefHat } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface DashboardLayoutProps {
@@ -17,6 +17,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     { label: "CHAT", href: "/chat", icon: MessageSquare },
     { label: "CALENDAR", href: "/calendar", icon: Calendar },
     { label: "TASKS", href: "/tasks", icon: CheckSquare },
+    { label: "MEALS", href: "/meals", icon: ChefHat },
     { label: "HABITS", href: "/habits", icon: Flame },
     { label: "ALERTS", href: "/notifications", icon: Bell },
     { label: "PROFILE", href: "/profile", icon: User },

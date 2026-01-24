@@ -5,11 +5,12 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
-import Chat from "./pages/Chat";
+import ChatEnhanced from "./pages/ChatEnhanced";
 import Calendar from "./pages/Calendar";
 import Tasks from "./pages/TasksEnhanced";
 import Notifications from "./pages/Notifications";
 import Habits from "./pages/Habits";
+import MealPlanning from "./pages/MealPlanning";
 import Profile from "./pages/Profile";
 
 function Router() {
@@ -17,11 +18,12 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
-      <Route path="/chat" component={Chat} />
+      <Route path="/chat" component={ChatEnhanced} />
       <Route path="/calendar" component={Calendar} />
       <Route path="/tasks" component={Tasks} />
       <Route path="/habits" component={Habits} />
       <Route path="/notifications" component={Notifications} />
+      <Route path="/meals" component={MealPlanning} />
       <Route path="/profile" component={Profile} />
       <Route path="/404" component={NotFound} />
       {/* Final fallback route */}

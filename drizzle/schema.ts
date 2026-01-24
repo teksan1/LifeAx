@@ -121,3 +121,91 @@ export const recommendations = mysqlTable("recommendations", {
 
 export type Recommendation = typeof recommendations.$inferSelect;
 export type InsertRecommendation = typeof recommendations.$inferInsert;
+
+// Conversation analysis for emotional intelligence
+export const conversationAnalysis = mysqlTable("conversation_analysis", {
+  id: int("id").autoincrement().primaryKey(),
+  conversationId: int("conversationId").notNull().references(() => conversations.id, { onDelete: "cascade" }),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  stressLevel: int("stressLevel").default(0).notNull(),
+  riskLevel: int("riskLevel").default(0).notNull(),
+  sentiment: varchar("sentiment", { length: 50 }).notNull(),
+  emotionalKeywords: text("emotionalKeywords"),
+  decisionRisks: text("decisionRisks"),
+  interventionNeeded: int("interventionNeeded").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ConversationAnalysis = typeof conversationAnalysis.$inferSelect;
+export type InsertConversationAnalysis = typeof conversationAnalysis.$inferInsert;
+
+// Meal plans table
+export const mealPlans = mysqlTable("meal_plans", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  title: varchar("title", { length: 255 }).notNull(),
+  startDate: timestamp("startDate").notNull(),
+  endDate: timestamp("endDate").notNull(),
+  dietaryPreferences: text("dietaryPreferences"),
+  restrictions: text("restrictions"),
+  budget: int("budget"),
+  servings: int("servings").default(2).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type MealPlan = typeof mealPlans.$inferSelect;
+export type InsertMealPlan = typeof mealPlans.$inferInsert;
+
+// Meal plan days
+export const mealPlanDays = mysqlTable("meal_plan_days", {
+  id: int("id").autoincrement().primaryKey(),
+  mealPlanId: int("mealPlanId").notNull().references(() => mealPlans.id, { onDelete: "cascade" }),
+  dayOfWeek: int("dayOfWeek").notNull(),
+  date: timestamp("date").notNull(),
+  breakfast: text("breakfast"),
+  lunch: text("lunch"),
+  dinner: text("dinner"),
+  snacks: text("snacks"),
+});
+
+export type MealPlanDay = typeof mealPlanDays.$inferSelect;
+export type InsertMealPlanDay = typeof mealPlanDays.$inferInsert;
+
+// Recipes database
+export const recipes = mysqlTable("recipes", {
+  id: int("id").autoincrement().primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  servings: int("servings").default(2).notNull(),
+  prepTime: int("prepTime"),
+  cookTime: int("cookTime"),
+  difficulty: mysqlEnum("difficulty", ["easy", "medium", "hard"]).default("medium").notNull(),
+  ingredients: text("ingredients"),
+  instructions: text("instructions"),
+  tools: text("tools"),
+  nutritionInfo: text("nutritionInfo"),
+  photoUrl: varchar("photoUrl", { length: 500 }),
+  dietaryTags: text("dietaryTags"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Recipe = typeof recipes.$inferSelect;
+export type InsertRecipe = typeof recipes.$inferInsert;
+
+// Shopping list items
+export const shoppingListItems = mysqlTable("shopping_list_items", {
+  id: int("id").autoincrement().primaryKey(),
+  mealPlanId: int("mealPlanId").notNull().references(() => mealPlans.id, { onDelete: "cascade" }),
+  itemName: varchar("itemName", { length: 255 }).notNull(),
+  quantity: varchar("quantity", { length: 100 }).notNull(),
+  unit: varchar("unit", { length: 50 }).notNull(),
+  store: mysqlEnum("store", ["coles", "woolworths"]).notNull(),
+  price: int("price"),
+  category: varchar("category", { length: 100 }).notNull(),
+  purchased: int("purchased").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type ShoppingListItem = typeof shoppingListItems.$inferSelect;
+export type InsertShoppingListItem = typeof shoppingListItems.$inferInsert;

@@ -11,8 +11,14 @@ import {
   createHabit, getHabits,
   createRecommendation, getRecommendations
 } from "./db";
+import {
+  analyzeConversation, getConversationAnalysis,
+  createMealPlan, getMealPlans, getMealPlanDetails, addMealPlanDay,
+  addRecipe, getRecipes, addShoppingListItem, getShoppingList, markShoppingItemPurchased, getShoppingListTotal
+} from "./db-enhanced";
 import { invokeLLM } from "./_core/llm";
 import { TRPCError } from "@trpc/server";
+import { emotionalIntelligenceRouter, mealPlanningRouter, shoppingRouter } from "./routers-enhanced";
 
 export const appRouter = router({
   system: systemRouter,
@@ -272,6 +278,10 @@ export const appRouter = router({
   }),
 
   // Habits procedures
+  emotionalIntelligence: emotionalIntelligenceRouter,
+  mealPlanning: mealPlanningRouter,
+  shopping: shoppingRouter,
+
   habits: router({
     create: protectedProcedure
       .input(z.object({
