@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, conversations, messages, tasks, calendarEvents, notifications, habits, recommendations, Conversation, Message, Task, CalendarEvent, Notification, Habit, Recommendation, InsertConversation, InsertMessage, InsertTask, InsertCalendarEvent, InsertNotification, InsertHabit, InsertRecommendation } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +89,136 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+// Chat queries
+export async function createConversation(userId: number, title: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(conversations).values({ userId, title });
+  return result;
+}
+
+export async function getConversations(userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.select().from(conversations).where(eq(conversations.userId, userId)).orderBy(desc(conversations.updatedAt));
+  return result;
+}
+
+export async function addMessage(conversationId: number, role: "user" | "assistant", content: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(messages).values({ conversationId, role, content });
+  return result;
+}
+
+export async function getMessages(conversationId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.select().from(messages).where(eq(messages.conversationId, conversationId)).orderBy(messages.createdAt);
+  return result;
+}
+
+// Task queries
+export async function createTask(userId: number, title: string, description?: string, priority?: string, dueDate?: Date) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(tasks).values({ userId, title, description, priority: (priority as any) || "medium", dueDate });
+  return result;
+}
+
+export async function getTasks(userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.select().from(tasks).where(eq(tasks.userId, userId)).orderBy(desc(tasks.dueDate));
+  return result;
+}
+
+export async function updateTask(taskId: number, updates: Partial<InsertTask>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(tasks).set(updates).where(eq(tasks.id, taskId));
+}
+
+export async function deleteTask(taskId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(tasks).where(eq(tasks.id, taskId));
+}
+
+// Calendar queries
+export async function createCalendarEvent(userId: number, title: string, startTime: Date, endTime: Date, description?: string, location?: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(calendarEvents).values({ userId, title, startTime, endTime, description, location });
+  return result;
+}
+
+export async function getCalendarEvents(userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.select().from(calendarEvents).where(eq(calendarEvents.userId, userId)).orderBy(calendarEvents.startTime);
+  return result;
+}
+
+export async function updateCalendarEvent(eventId: number, updates: Partial<InsertCalendarEvent>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(calendarEvents).set(updates).where(eq(calendarEvents.id, eventId));
+}
+
+export async function deleteCalendarEvent(eventId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(calendarEvents).where(eq(calendarEvents.id, eventId));
+}
+
+// Notification queries
+export async function createNotification(userId: number, title: string, content: string, type: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(notifications).values({ userId, title, content, type: (type as any) });
+  return result;
+}
+
+export async function getNotifications(userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.select().from(notifications).where(eq(notifications.userId, userId)).orderBy(desc(notifications.createdAt));
+  return result;
+}
+
+export async function markNotificationAsRead(notificationId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(notifications).set({ read: 1 }).where(eq(notifications.id, notificationId));
+}
+
+// Habit queries
+export async function createHabit(userId: number, name: string, frequency: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(habits).values({ userId, name, frequency: (frequency as any) });
+  return result;
+}
+
+export async function getHabits(userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.select().from(habits).where(eq(habits.userId, userId));
+  return result;
+}
+
+// Recommendation queries
+export async function createRecommendation(userId: number, title: string, content: string, category: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(recommendations).values({ userId, title, content, category });
+  return result;
+}
+
+export async function getRecommendations(userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.select().from(recommendations).where(eq(recommendations.userId, userId)).orderBy(desc(recommendations.createdAt));
+  return result;
+}
