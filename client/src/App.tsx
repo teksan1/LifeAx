@@ -5,13 +5,29 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
+import ChatEnhanced from "./pages/ChatEnhanced";
+import Calendar from "./pages/Calendar";
+import Tasks from "./pages/TasksEnhanced";
+import Notifications from "./pages/Notifications";
+import Habits from "./pages/Habits";
+import MealPlanning from "./pages/MealPlanning";
+import MealPrep from "./pages/MealPrep";
+import Profile from "./pages/Profile";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/404"} component={NotFound} />
+      <Route path="/" component={Home} />
+      <Route path="/chat" component={ChatEnhanced} />
+      <Route path="/calendar" component={Calendar} />
+      <Route path="/tasks" component={Tasks} />
+      <Route path="/habits" component={Habits} />
+      <Route path="/notifications" component={Notifications} />
+      <Route path="/meals" component={MealPlanning} />
+      <Route path="/prep" component={MealPrep} />
+      <Route path="/profile" component={Profile} />
+      <Route path="/404" component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>
@@ -27,8 +43,8 @@ function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider
-        defaultTheme="light"
-        // switchable
+        defaultTheme="dark"
+        switchable
       >
         <TooltipProvider>
           <Toaster />

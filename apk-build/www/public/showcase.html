@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeAx - AI Life Optimization Platform</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #fff;
+            line-height: 1.4;
+            letter-spacing: 0.05em;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        header {
+            border-bottom: 3px solid #fff;
+            padding-bottom: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+            margin: 3rem 0 1.5rem 0;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #fff;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin: 1.5rem 0 0.75rem 0;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: #ccc;
+            font-size: 0.95rem;
+        }
+
+        /* Grid Layout */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .card {
+            border: 3px solid #fff;
+            padding: 2rem;
+            background: #0a0a0a;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            background: #fff;
+            color: #000;
+            transform: translate(-2px, -2px);
+        }
+
+        .card h3 {
+            margin-top: 0;
+        }
+
+        .card p {
+            color: inherit;
+        }
+
+        .card.featured {
+            grid-column: span 1;
+            border-width: 4px;
+            background: #1a1a1a;
+        }
+
+        /* Feature Showcase */
+        .feature-showcase {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin: 3rem 0;
+            align-items: center;
+        }
+
+        .feature-text h3 {
+            margin-top: 0;
+        }
+
+        .feature-visual {
+            border: 3px solid #fff;
+            padding: 2rem;
+            background: #0a0a0a;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-visual::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 2px dashed #333;
+            pointer-events: none;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            margin: 2rem 0;
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .stat {
+            border: 2px solid #fff;
+            padding: 1.5rem;
+            text-align: center;
+            background: #0a0a0a;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #fff;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: #999;
+            margin-top: 0.5rem;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        button {
+            border: 3px solid #fff;
+            padding: 1rem 2rem;
+            background: #000;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            letter-spacing: 0.05em;
+        }
+
+        button:hover {
+            background: #fff;
+            color: #000;
+            transform: translate(-2px, -2px);
+        }
+
+        button.secondary {
+            background: #1a1a1a;
+        }
+
+        button.secondary:hover {
+            background: #fff;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 3px solid #fff;
+            margin: 2rem 0 1rem 0;
+            gap: 0;
+        }
+
+        .tab-button {
+            border: none;
+            border-bottom: 3px solid transparent;
+            padding: 1rem 2rem;
+            background: transparent;
+            color: #999;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin: 0;
+        }
+
+        .tab-button:hover {
+            color: #fff;
+            transform: none;
+        }
+
+        .tab-button.active {
+            color: #fff;
+            border-bottom-color: #fff;
+            background: transparent;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 2rem 0;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Feature List */
+        .feature-list {
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+
+        .feature-list li {
+            padding: 0.75rem 0;
+            padding-left: 2rem;
+            position: relative;
+            color: #ccc;
+        }
+
+        .feature-list li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 3px solid #fff;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            text-align: center;
+            color: #666;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            h2 {
+                font-size: 1.75rem;
+            }
+
+            .feature-showcase {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab-button {
+                padding: 0.75rem 1rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        /* Interactive Elements */
+        .toggle-section {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .toggle-section h3 {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .toggle-icon {
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-section.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .toggle-content {
+            max-height: 1000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .toggle-section.collapsed .toggle-content {
+            max-height: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>LIFEAX</h1>
+            <p style="font-size: 1.1rem; color: #aaa; margin-bottom: 0;">AI-Powered Life Optimization Platform</p>
+            <p style="color: #666;">Combine intelligent advice with practical productivity tools to master your life</p>
+        </header>
+
+        <!-- Hero Stats -->
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-number">4</div>
+                <div class="stat-label">Core Features</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">AI</div>
+                <div class="stat-label">Powered Insights</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Responsive Design</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">∞</div>
+                <div class="stat-label">Scalability</div>
+            </div>
+        </div>
+
+        <!-- Feature Tabs -->
+        <div>
+            <div class="tabs">
+                <button class="tab-button active" onclick="switchTab(event, 'overview')">Overview</button>
+                <button class="tab-button" onclick="switchTab(event, 'features')">Features</button>
+                <button class="tab-button" onclick="switchTab(event, 'analytics')">Analytics</button>
+                <button class="tab-button" onclick="switchTab(event, 'architecture')">Architecture</button>
+            </div>
+
+            <!-- Overview Tab -->
+            <div id="overview" class="tab-content active">
+                <h2>Platform Overview</h2>
+                <p>LifeAx is a comprehensive life optimization platform that combines artificial intelligence with practical productivity tools. Designed with a brutalist aesthetic, it delivers high-contrast, bold interfaces that prioritize clarity and efficiency.</p>
+
+                <div class="feature-showcase">
+                    <div class="feature-text">
+                        <h3>AI-Powered Chat</h3>
+                        <p>Get personalized life optimization advice through conversational AI. Stream responses in real-time and maintain conversation history for continuous learning and growth.</p>
+                        <ul class="feature-list">
+                            <li>Real-time streaming responses</li>
+                            <li>Conversation history tracking</li>
+                            <li>Personalized recommendations</li>
+                            <li>Markdown-formatted responses</li>
+                        </ul>
+                    </div>
+                    <div class="feature-visual">
+                        <div style="text-align: center; color: #666;">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">💬</div>
+                            <p>AI Chat Interface</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feature-showcase" style="margin-top: 3rem;">
+                    <div class="feature-visual">
+                        <div style="text-align: center; color: #666;">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">📅</div>
+                            <p>Calendar Management</p>
+                        </div>
+                    </div>
+                    <div class="feature-text">
+                        <h3>Calendar & Events</h3>
+                        <p>Manage your schedule with an intuitive calendar interface. Create, edit, and track events with full control over your time and commitments.</p>
+                        <ul class="feature-list">
+                            <li>Month/week/day views</li>
+                            <li>Event creation and editing</li>
+                            <li>Location and description support</li>
+                            <li>Upcoming events preview</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Tab -->
+            <div id="features" class="tab-content">
+                <h2>Core Features</h2>
+                <div class="grid">
+                    <div class="card featured">
+                        <h3>🤖 AI Chat Interface</h3>
+                        <p>Conversational AI providing personalized life optimization advice with streaming responses and full conversation history management.</p>
+                    </div>
+                    <div class="card">
+                        <h3>📅 Calendar Management</h3>
+                        <p>Comprehensive event scheduling with month views, event creation, and upcoming events tracking.</p>
+                    </div>
+                    <div class="card">
+                        <h3>✓ Task Management</h3>
+                        <p>Organize tasks by priority levels, set due dates, and track completion status with intuitive list views.</p>
+                    </div>
+                    <div class="card">
+                        <h3>🔔 Notifications</h3>
+                        <p>Receive reminders for tasks and events, plus AI-generated recommendations for continuous improvement.</p>
+                    </div>
+                    <div class="card">
+                        <h3>💡 AI Recommendations</h3>
+                        <p>Generate personalized life optimization recommendations based on your tasks, habits, and productivity patterns.</p>
+                    </div>
+                    <div class="card">
+                        <h3>🎨 Brutalist Design</h3>
+                        <p>High-contrast, bold typography with raw geometric layouts for maximum clarity and efficiency.</p>
+                    </div>
+                </div>
+
+                <h2 style="margin-top: 3rem;">Technical Specifications</h2>
+                <div class="grid">
+                    <div class="card">
+                        <h3>Frontend Stack</h3>
+                        <ul class="feature-list">
+                            <li>React 19</li>
+                            <li>Tailwind CSS 4</li>
+                            <li>tRPC for type-safe APIs</li>
+                            <li>Wouter for routing</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>Backend Stack</h3>
+                        <ul class="feature-list">
+                            <li>Express 4</li>
+                            <li>tRPC 11</li>
+                            <li>Drizzle ORM</li>
+                            <li>MySQL/TiDB</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>AI Integration</h3>
+                        <ul class="feature-list">
+                            <li>LLM API integration</li>
+                            <li>Streaming responses</li>
+                            <li>JSON schema validation</li>
+                            <li>Structured outputs</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div id="analytics" class="tab-content">
+                <h2>Platform Analytics</h2>
+                <p>LifeAx provides comprehensive analytics to track your productivity and life optimization progress.</p>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 2rem 0;">
+                    <div>
+                        <h3>Task Completion Trend</h3>
+                        <div class="chart-container">
+                            <canvas id="completionChart"></canvas>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>Priority Distribution</h3>
+                        <div class="chart-container">
+                            <canvas id="priorityChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 2rem 0;">
+                    <div>
+                        <h3>Weekly Activity</h3>
+                        <div class="chart-container">
+                            <canvas id="activityChart"></canvas>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>Recommendation Categories</h3>
+                        <div class="chart-container">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Architecture Tab -->
+            <div id="architecture" class="tab-content">
+                <h2>System Architecture</h2>
+                <p>LifeAx is built on a modern, scalable architecture with clear separation of concerns and type-safe communication.</p>
+
+                <div class="card" style="margin: 2rem 0; background: #1a1a1a;">
+                    <h3>Database Schema</h3>
+                    <ul class="feature-list">
+                        <li><strong>Users:</strong> Authentication and profile management</li>
+                        <li><strong>Conversations:</strong> Chat history and metadata</li>
+                        <li><strong>Messages:</strong> Individual chat messages with roles</li>
+                        <li><strong>Tasks:</strong> Task items with priorities and due dates</li>
+                        <li><strong>Calendar Events:</strong> Scheduled events with times and locations</li>
+                        <li><strong>Notifications:</strong> User alerts and reminders</li>
+                        <li><strong>Habits:</strong> Habit tracking with frequency</li>
+                        <li><strong>Recommendations:</strong> AI-generated insights</li>
+                    </ul>
+                </div>
+
+                <div class="card" style="margin: 2rem 0; background: #1a1a1a;">
+                    <h3>API Procedures (tRPC)</h3>
+                    <ul class="feature-list">
+                        <li><strong>Chat:</strong> createConversation, sendMessage, getMessages</li>
+                        <li><strong>Tasks:</strong> create, list, update, delete</li>
+                        <li><strong>Calendar:</strong> createEvent, getEvents, updateEvent, deleteEvent</li>
+                        <li><strong>Notifications:</strong> list, markAsRead</li>
+                        <li><strong>Recommendations:</strong> generate, list</li>
+                        <li><strong>Habits:</strong> create, list</li>
+                    </ul>
+                </div>
+
+                <div class="card" style="margin: 2rem 0; background: #1a1a1a;">
+                    <h3>Testing Coverage</h3>
+                    <ul class="feature-list">
+                        <li>16 vitest tests for API procedures</li>
+                        <li>Chat functionality testing</li>
+                        <li>Task CRUD operations</li>
+                        <li>Calendar event management</li>
+                        <li>Notification handling</li>
+                        <li>Recommendations generation</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Call to Action -->
+        <div style="margin: 4rem 0; padding: 3rem; border: 3px solid #fff; background: #0a0a0a; text-align: center;">
+            <h2 style="margin-top: 0; border: none; margin-bottom: 1.5rem;">Ready to Optimize Your Life?</h2>
+            <p style="margin-bottom: 2rem; font-size: 1.1rem;">LifeAx combines AI-powered insights with practical productivity tools to help you achieve your goals.</p>
+            <div class="button-group" style="justify-content: center;">
+                <button onclick="alert('Access the LifeAx platform at the main application URL')">Get Started</button>
+                <button class="secondary" onclick="alert('Documentation available in the project README')">Learn More</button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>LifeAx © 2026 | AI Life Optimization Platform | Built with React, Express, and Advanced AI</p>
+            <p style="margin-top: 1rem; font-size: 0.85rem;">Explore data more intuitively • Understand trends better • Easily save or share insights</p>
+        </footer>
+    </div>
+
+    <script>
+        // Tab switching
+        function switchTab(event, tabName) {
+            event.preventDefault();
+            
+            // Hide all tab contents
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+            
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => button.classList.remove('active'));
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        // Initialize charts
+        function initCharts() {
+            // Task Completion Trend
+            const completionCtx = document.getElementById('completionChart').getContext('2d');
+            new Chart(completionCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                    datasets: [{
+                        label: 'Tasks Completed',
+                        data: [12, 19, 15, 25],
+                        borderColor: '#fff',
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#000',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#fff', font: { family: "'Courier New', monospace" } }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { color: '#666' },
+                            grid: { color: '#333' }
+                        },
+                        x: {
+                            ticks: { color: '#666' },
+                            grid: { color: '#333' }
+                        }
+                    }
+                }
+            });
+
+            // Priority Distribution
+            const priorityCtx = document.getElementById('priorityChart').getContext('2d');
+            new Chart(priorityCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['High', 'Medium', 'Low'],
+                    datasets: [{
+                        data: [35, 45, 20],
+                        backgroundColor: ['#ff4444', '#ffaa00', '#666666'],
+                        borderColor: '#fff',
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#fff', font: { family: "'Courier New', monospace" } }
+                        }
+                    }
+                }
+            });
+
+            // Weekly Activity
+            const activityCtx = document.getElementById('activityChart').getContext('2d');
+            new Chart(activityCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Activities',
+                        data: [8, 12, 10, 15, 14, 6, 4],
+                        backgroundColor: '#fff',
+                        borderColor: '#000',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#fff', font: { family: "'Courier New', monospace" } }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { color: '#666' },
+                            grid: { color: '#333' }
+                        },
+                        x: {
+                            ticks: { color: '#666' },
+                            grid: { color: '#333' }
+                        }
+                    }
+                }
+            });
+
+            // Recommendation Categories
+            const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+            new Chart(categoryCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['Productivity', 'Health', 'Learning', 'Relationships', 'Finance'],
+                    datasets: [{
+                        label: 'Recommendations',
+                        data: [85, 72, 90, 65, 78],
+                        borderColor: '#fff',
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                        borderWidth: 3,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#000',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#fff', font: { family: "'Courier New', monospace" } }
+                        }
+                    },
+                    scales: {
+                        r: {
+                            ticks: { color: '#666' },
+                            grid: { color: '#333' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initCharts);
+    </script>
+</body>
+</html>
