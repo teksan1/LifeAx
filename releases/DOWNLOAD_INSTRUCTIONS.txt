@@ -1,0 +1,109 @@
+================================================================================
+                    LIFEAX v1.0.0 - ANDROID APK
+================================================================================
+
+📱 QUICK START GUIDE
+
+1. DOWNLOAD
+   - Download the APK file: lifeax-v1.0.0-release.apk
+   - File size: ~38MB
+   - Requires Android 5.0 or higher
+
+2. ENABLE INSTALLATION
+   - Go to Settings > Security > Unknown Sources
+   - Toggle ON to allow installation from unknown sources
+
+3. INSTALL
+   - Open the downloaded APK file
+   - Tap "Install"
+   - Wait for installation (30-60 seconds)
+   - Tap "Open" to launch
+
+4. FIRST LAUNCH
+   - Sign in with your credentials
+   - Grant permissions when prompted
+   - Start using LifeAx!
+
+================================================================================
+                            FEATURES INCLUDED
+================================================================================
+
+✓ AI Chat with emotional intelligence
+✓ Calendar and event management
+✓ Task tracking and management
+✓ Meal planning and shopping lists
+✓ Meal prep tracking
+✓ Habits tracker
+✓ Notifications and reminders
+✓ User profile management
+✓ Settings and preferences
+✓ Mobile-optimized responsive design
+✓ Brutalist design aesthetic
+✓ Close buttons on all modals
+✓ Touch-friendly interface
+
+================================================================================
+                          SYSTEM REQUIREMENTS
+================================================================================
+
+Minimum Requirements:
+- Android 5.0 (API 21) or higher
+- 100MB free storage space
+- 2GB RAM minimum
+- Internet connection (for AI features)
+
+Recommended:
+- Android 10 or higher
+- 4GB RAM or more
+- WiFi connection
+- 5.5"+ screen size
+
+================================================================================
+                         TROUBLESHOOTING
+================================================================================
+
+Installation Issues:
+- "Unknown app" warning → Tap "Install anyway"
+- "Insufficient storage" → Free up 100MB+ space
+- "App not compatible" → Update Android to 5.0+
+
+Runtime Issues:
+- App crashes → Clear cache in Settings > Apps > LifeAx
+- Features not working → Check internet connection
+- Slow performance → Close background apps
+
+================================================================================
+                           DOCUMENTATION
+================================================================================
+
+For detailed information, see:
+- README.md - Overview and features
+- INSTALLATION.md - Step-by-step installation guide
+- RELEASE_NOTES.md - Complete release information
+- APK_BUILD_GUIDE.md - Build instructions
+
+================================================================================
+                            SUPPORT & HELP
+================================================================================
+
+GitHub: https://github.com/teksan1/LifeAx
+Issues: https://github.com/teksan1/LifeAx/issues
+Web: https://lifeax.manus.space
+
+================================================================================
+                              VERSION INFO
+================================================================================
+
+Version: 1.0.0
+Release Date: January 30, 2026
+Status: Production Ready ✓
+Build: Android 5.0+ (API 21+)
+
+================================================================================
+
+Thank you for using LifeAx!
+We hope it helps you optimize your life.
+
+For updates and news, follow us on GitHub.
+
+================================================================================
