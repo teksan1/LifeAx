@@ -93,8 +93,14 @@ export async function getUserByOpenId(openId: string) {
 export async function createConversation(userId: number, title: string) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  const result = await db.insert(conversations).values({ userId, title });
-  return result;
+  try {
+    await db.insert(conversations).values({ userId, title });
+    const result = await db.select().from(conversations).where(eq(conversations.userId, userId)).orderBy(desc(conversations.updatedAt)).limit(1);
+    return result[0] || { id: 0, userId, title, createdAt: new Date(), updatedAt: new Date() };
+  } catch (error) {
+    console.error("Error creating conversation:", error);
+    throw error;
+  }
 }
 
 export async function getConversations(userId: number) {
@@ -107,8 +113,14 @@ export async function getConversations(userId: number) {
 export async function addMessage(conversationId: number, role: "user" | "assistant", content: string) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  const result = await db.insert(messages).values({ conversationId, role, content });
-  return result;
+  try {
+    await db.insert(messages).values({ conversationId, role, content });
+    const result = await db.select().from(messages).where(eq(messages.conversationId, conversationId)).orderBy(desc(messages.createdAt)).limit(1);
+    return result[0] || { id: 0, conversationId, role, content, createdAt: new Date() };
+  } catch (error) {
+    console.error("Error adding message:", error);
+    throw error;
+  }
 }
 
 export async function getMessages(conversationId: number) {
