@@ -1,2 +1,84 @@
-#!/data/data/com.termux/files/usr/bin/bash
-node --experimental-specifier-resolution=node main.mjs
+#!/usr/bin/env bash
+set -e
+
+# ------------------------------
+# 1️⃣ Load environment variables
+# ------------------------------
+if [ ! -f ~/LifeAx/config/.env ]; then
+  echo "❌ .env file not found. Please create it with your OpenAI key."
+  exit 1
+fi
+export $(grep -v '^#' ~/LifeAx/config/.env | xargs)
+echo "🌐 Environment variables loaded from .env"
+
+# ------------------------------
+# 2️⃣ Clean previous frontend build
+# ------------------------------
+rm -rf ~/LifeAx/dist ~/LifeAx/node_modules/.vite
+echo "🧹 Previous frontend build cleaned"
+
+# ------------------------------
+# 3️⃣ Vite config with root & alias
+# ------------------------------
+cat << 'VITE' > ~/LifeAx/vite.config.mjs
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+
+export default defineConfig({
+  root: path.resolve(__dirname, 'client'),
+  plugins: [react()],
+  resolve: {
+    alias: {
+      '@shared': path.resolve(__dirname, './client/src/shared')
+    }
+  },
+  build: {
+    outDir: path.resolve(__dirname, 'dist'),
+    emptyOutDir: true
+  }
+});
+VITE
+echo "🛠️ Vite config updated with aliases and root"
+
+# ------------------------------
+# 4️⃣ Build frontend
+# ------------------------------
+echo "🧱 Building frontend…"
+pnpm vite build --config ~/LifeAx/vite.config.mjs
+echo "✅ Frontend built"
+
+# ------------------------------
+# 5️⃣ Backend: main.mjs with OpenAI
+# ------------------------------
+cat << 'BACKEND' > ~/LifeAx/main.mjs
+import OpenAI from 'openai';
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
+
+// Example usage
+(async () => {
+  try {
+    const response = await openai.models.list();
+    console.log("✅ OpenAI connection successful. Models loaded:");
+    console.log(response);
+  } catch (err) {
+    console.error("❌ OpenAI error:", err.message);
+  }
+})();
+BACKEND
+echo "🔧 Backend ready with OpenAI v4+ import"
+
+# ------------------------------
+# 6️⃣ Start backend
+# ------------------------------
+echo "🚀 Starting backend…"
+node ~/LifeAx/main.mjs &
+
+# ------------------------------
+# 7️⃣ Frontend ready message
+# ------------------------------
+echo "🌟 Frontend ready at dist/"
+echo "Use: npx serve ~/LifeAx/dist to preview in the browser"

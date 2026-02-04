@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+set -e
+
+# 1️⃣ Set environment variables (replace values as needed)
+export OPENAI_API_KEY="your_openai_api_key_here"
+export VITE_ANALYTICS_ENDPOINT="https://your-analytics-endpoint"
+export VITE_ANALYTICS_WEBSITE_ID="your-site-id"
+
+echo "🌐 Environment variables set"
+
+# 2️⃣ Clean previous build
+rm -rf ~/LifeAx/dist ~/LifeAx/node_modules/.vite
+echo "🧹 Previous frontend build cleaned"
+
+# 3️⃣ Fix Vite alias (temporary file override for competition)
+cat << 'VITE' > ~/LifeAx/vite.config.mjs
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      '@shared': path.resolve(__dirname, './client/src/shared')
+    }
+  }
+});
+VITE
+echo "🛠️ Vite config updated with aliases"
+
+# 4️⃣ Build frontend
+echo "🧱 Building frontend…"
+pnpm vite build --config ~/LifeAx/vite.config.mjs
+echo "✅ Frontend built"
+
+# 5️⃣ Fix backend import (OpenAI v4+)
+cat << 'BACKEND' > ~/LifeAx/main.mjs
+import OpenAI from 'openai';
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
+
+// Example usage: list models
+(async () => {
+  try {
+    const response = await openai.models.list();
+    console.log(response);
+  } catch (err) {
+    console.error(err);
+  }
+})();
+BACKEND
+echo "🔧 Backend fixed with OpenAI v4+ import"
+
+# 6️⃣ Start backend
+echo "🚀 Starting backend…"
+node ~/LifeAx/main.mjs &
+
+# 7️⃣ Start frontend preview (optional, if competition requires browser test)
+echo "🌟 Frontend ready at dist/"
+echo "Use: npx serve ~/LifeAx/dist if needed"
