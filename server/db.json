@@ -1,0 +1,12 @@
+{
+  "users": [
+    { "id": 1, "name": "Test User", "authToken": "stub_token" }
+  ],
+  "notifications": [
+    { "id": 1, "message": "Welcome to LifeAx!", "read": false, "timestamp": 1675000000000 }
+  ],
+  "settings": {
+    "defaultLanguage": "en",
+    "theme": "light"
+  }
+}

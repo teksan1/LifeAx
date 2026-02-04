@@ -1,58 +1,35 @@
-import { Toaster } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import NotFound from "@/pages/NotFound";
-import { Route, Switch } from "wouter";
-import ErrorBoundary from "./components/ErrorBoundary";
-import { ThemeProvider } from "./contexts/ThemeContext";
-import Home from "./pages/Home";
-import ChatEnhanced from "./pages/ChatEnhanced";
-import Calendar from "./pages/Calendar";
-import Tasks from "./pages/TasksEnhanced";
-import Notifications from "./pages/Notifications";
-import Habits from "./pages/Habits";
-import MealPlanning from "./pages/MealPlanning";
-import MealPrep from "./pages/MealPrep";
-import Profile from "./pages/Profile";
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { Dashboard } from '@/components/pages/Dashboard';
+import { Notifications } from '@/components/pages/Notifications';
+import { Settings } from '@/components/pages/Settings';
+import { Login } from '@/components/pages/Login';
+import { loadUserLS } from '@/lib/trpc';
 
-function Router() {
-  // make sure to consider if you need authentication for certain routes
+export const App: React.FC = () => {
+  const [loggedIn, setLoggedIn] = useState(!!loadUserLS());
+
+  const logout = () => setLoggedIn(false);
+  const handleLogin = () => setLoggedIn(true);
+
+  if (!loggedIn) return <Login onLogin={handleLogin} />;
+
   return (
-    <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/chat" component={ChatEnhanced} />
-      <Route path="/calendar" component={Calendar} />
-      <Route path="/tasks" component={Tasks} />
-      <Route path="/habits" component={Habits} />
-      <Route path="/notifications" component={Notifications} />
-      <Route path="/meals" component={MealPlanning} />
-      <Route path="/prep" component={MealPrep} />
-      <Route path="/profile" component={Profile} />
-      <Route path="/404" component={NotFound} />
-      {/* Final fallback route */}
-      <Route component={NotFound} />
-    </Switch>
-  );
-}
+    <Router>
+      <nav>
+        <Link to="/">Dashboard</Link> |{' '}
+        <Link to="/notifications">Notifications</Link> |{' '}
+        <Link to="/settings">Settings</Link>
+        <button onClick={logout} style={{ marginLeft: '1em' }}>Logout</button>
+      </nav>
 
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
-
-function App() {
-  return (
-    <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="dark"
-        switchable
-      >
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
-      </ThemeProvider>
-    </ErrorBoundary>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/notifications" element={<Notifications />} />
+        <Route path="/settings" element={<Settings />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;

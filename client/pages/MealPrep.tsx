@@ -1,0 +1,4 @@
+import React from "react";
+type Props = { children?: React.ReactNode };
+const MealPrep = (props: Props) => <div>MealPrep page stub</div>;
+export default MealPrep;

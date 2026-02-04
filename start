@@ -1,0 +1,2 @@
+#!/data/data/com.termux/files/usr/bin/bash
+node --experimental-specifier-resolution=node main.mjs
