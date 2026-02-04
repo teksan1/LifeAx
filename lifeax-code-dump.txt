@@ -1,0 +1,2552 @@
+===== client/src/App.tsx =====
+import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import NotFound from "@/pages/NotFound";
+import { Route, Switch } from "wouter";
+import ErrorBoundary from "./components/ErrorBoundary";
+import { ThemeProvider } from "./contexts/ThemeContext";
+import Home from "./pages/Home";
+import ChatEnhanced from "./pages/ChatEnhanced";
+import Calendar from "./pages/Calendar";
+import Tasks from "./pages/TasksEnhanced";
+import Notifications from "./pages/Notifications";
+import Habits from "./pages/Habits";
+import MealPlanning from "./pages/MealPlanning";
+import MealPrep from "./pages/MealPrep";
+import Profile from "./pages/Profile";
+
+function Router() {
+  // make sure to consider if you need authentication for certain routes
+  return (
+    <Switch>
+
+===== client/src/_core/hooks/useAuth.ts =====
+import { getLoginUrl } from "@/const";
+import { trpc } from "@/lib/trpc";
+import { TRPCClientError } from "@trpc/client";
+import { useCallback, useEffect, useMemo } from "react";
+
+type UseAuthOptions = {
+  redirectOnUnauthenticated?: boolean;
+  redirectPath?: string;
+};
+
+export function useAuth(options?: UseAuthOptions) {
+  const { redirectOnUnauthenticated = false, redirectPath = getLoginUrl() } =
+    options ?? {};
+  const utils = trpc.useUtils();
+
+  const meQuery = trpc.auth.me.useQuery(undefined, {
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+
+
+===== client/src/components/AIChatBox.tsx =====
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
+import { Loader2, Send, User, Sparkles } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Streamdown } from "streamdown";
+
+/**
+ * Message type matching server-side LLM Message interface
+ */
+export type Message = {
+  role: "system" | "user" | "assistant";
+  content: string;
+};
+
+export type AIChatBoxProps = {
+  /**
+   * Messages array to display in the chat.
+   * Should match the format used by invokeLLM on the server.
+
+===== client/src/components/DashboardLayout.tsx =====
+import { useAuth } from "@/_core/hooks/useAuth";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger,
+  useSidebar,
+
+===== client/src/components/DashboardLayoutBrutalist.tsx =====
+import { ReactNode, useState } from "react";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { useLocation } from "wouter";
+import { Menu, X, LogOut, MessageSquare, Calendar, CheckSquare, Bell, Flame, User, ChefHat, Utensils } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+interface DashboardLayoutProps {
+  children: ReactNode;
+}
+
+export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  const { user, logout } = useAuth();
+  const [location, setLocation] = useLocation();
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  const navItems = [
+    { label: "CHAT", href: "/chat", icon: MessageSquare },
+    { label: "CALENDAR", href: "/calendar", icon: Calendar },
+    { label: "TASKS", href: "/tasks", icon: CheckSquare },
+    { label: "MEALS", href: "/meals", icon: ChefHat },
+
+===== client/src/components/DashboardLayoutSkeleton.tsx =====
+import { Skeleton } from './ui/skeleton';
+
+export function DashboardLayoutSkeleton() {
+  return (
+    <div className="flex min-h-screen bg-background">
+      {/* Sidebar skeleton */}
+      <div className="w-[280px] border-r border-border bg-background p-4 space-y-6">
+        {/* Logo area */}
+        <div className="flex items-center gap-3 px-2">
+          <Skeleton className="h-8 w-8 rounded-md" />
+          <Skeleton className="h-4 w-24" />
+        </div>
+
+        {/* Menu items */}
+        <div className="space-y-2 px-2">
+          <Skeleton className="h-10 w-full rounded-lg" />
+          <Skeleton className="h-10 w-full rounded-lg" />
+          <Skeleton className="h-10 w-full rounded-lg" />
+        </div>
+
+
+===== client/src/components/ErrorBoundary.tsx =====
+import { cn } from "@/lib/utils";
+import { AlertTriangle, RotateCcw } from "lucide-react";
+import { Component, ReactNode } from "react";
+
+interface Props {
+  children: ReactNode;
+}
+
+interface State {
+  hasError: boolean;
+  error: Error | null;
+}
+
+class ErrorBoundary extends Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error): State {
+
+===== client/src/components/ManusDialog.tsx =====
+import { useEffect, useState } from "react";
+
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogTitle,
+} from "@/components/ui/dialog";
+
+interface ManusDialogProps {
+  title?: string;
+  logo?: string;
+  open?: boolean;
+  onLogin: () => void;
+  onOpenChange?: (open: boolean) => void;
+  onClose?: () => void;
+}
+
+
+===== client/src/components/Map.tsx =====
+/**
+ * GOOGLE MAPS FRONTEND INTEGRATION - ESSENTIAL GUIDE
+ *
+ * USAGE FROM PARENT COMPONENT:
+ * ======
+ *
+ * const mapRef = useRef<google.maps.Map | null>(null);
+ *
+ * <MapView
+ *   initialCenter={{ lat: 40.7128, lng: -74.0060 }}
+ *   initialZoom={15}
+ *   onMapReady={(map) => {
+ *     mapRef.current = map; // Store to control map from parent anytime, google map itself is in charge of the re-rendering, not react state.
+ * </MapView>
+ *
+ * ======
+ * Available Libraries and Core Features:
+ * -------------------------------
+ * 📍 MARKER (from `marker` library)
+ * - Attaches to map using { map, position }
+
+===== client/src/components/ui/accordion.tsx =====
+import * as React from "react";
+import * as AccordionPrimitive from "@radix-ui/react-accordion";
+import { ChevronDownIcon } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+
+function Accordion({
+  ...props
+}: React.ComponentProps<typeof AccordionPrimitive.Root>) {
+  return <AccordionPrimitive.Root data-slot="accordion" {...props} />;
+}
+
+function AccordionItem({
+  className,
+  ...props
+}: React.ComponentProps<typeof AccordionPrimitive.Item>) {
+  return (
+    <AccordionPrimitive.Item
+      data-slot="accordion-item"
+      className={cn("border-b last:border-b-0", className)}
+
+===== client/src/components/ui/alert-dialog.tsx =====
+import * as React from "react";
+import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
+
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
+
+function AlertDialog({
+  ...props
+}: React.ComponentProps<typeof AlertDialogPrimitive.Root>) {
+  return <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />;
+}
+
+function AlertDialogTrigger({
+  ...props
+}: React.ComponentProps<typeof AlertDialogPrimitive.Trigger>) {
+  return (
+    <AlertDialogPrimitive.Trigger data-slot="alert-dialog-trigger" {...props} />
+  );
+}
+
+
+===== client/src/components/ui/alert.tsx =====
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+
+import { cn } from "@/lib/utils";
+
+const alertVariants = cva(
+  "relative w-full rounded-lg border px-4 py-3 text-sm grid has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] grid-cols-[0_1fr] has-[>svg]:gap-x-3 gap-y-0.5 items-start [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current",
+  {
+    variants: {
+      variant: {
+        default: "bg-card text-card-foreground",
+        destructive:
+          "text-destructive bg-card [&>svg]:text-current *:data-[slot=alert-description]:text-destructive/90",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+);
+
+===== client/src/components/ui/aspect-ratio.tsx =====
+import * as AspectRatioPrimitive from "@radix-ui/react-aspect-ratio";
+
+function AspectRatio({
+  ...props
+}: React.ComponentProps<typeof AspectRatioPrimitive.Root>) {
+  return <AspectRatioPrimitive.Root data-slot="aspect-ratio" {...props} />;
+}
+
+export { AspectRatio };
+
+===== client/src/components/ui/avatar.tsx =====
+import * as React from "react";
+import * as AvatarPrimitive from "@radix-ui/react-avatar";
+
+import { cn } from "@/lib/utils";
+
+function Avatar({
+  className,
+  ...props
+}: React.ComponentProps<typeof AvatarPrimitive.Root>) {
+  return (
+    <AvatarPrimitive.Root
+      data-slot="avatar"
+      className={cn(
+        "relative flex size-8 shrink-0 overflow-hidden rounded-full",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+
+===== client/src/components/ui/badge.tsx =====
+import * as React from "react";
+import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
+
+import { cn } from "@/lib/utils";
+
+const badgeVariants = cva(
+  "inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden",
+  {
+    variants: {
+      variant: {
+        default:
+          "border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90",
+        secondary:
+          "border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90",
+        destructive:
+          "border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+        outline:
+          "text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
+      },
+
+===== client/src/components/ui/breadcrumb.tsx =====
+import * as React from "react";
+import { Slot } from "@radix-ui/react-slot";
+import { ChevronRight, MoreHorizontal } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+
+function Breadcrumb({ ...props }: React.ComponentProps<"nav">) {
+  return <nav aria-label="breadcrumb" data-slot="breadcrumb" {...props} />;
+}
+
+function BreadcrumbList({ className, ...props }: React.ComponentProps<"ol">) {
+  return (
+    <ol
+      data-slot="breadcrumb-list"
+      className={cn(
+        "text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5",
+        className
+      )}
+      {...props}
+    />
+
+===== client/src/components/ui/button-group.tsx =====
+import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
+
+import { cn } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
+
+const buttonGroupVariants = cva(
+  "flex w-fit items-stretch [&>*]:focus-visible:z-10 [&>*]:focus-visible:relative [&>[data-slot=select-trigger]:not([class*='w-'])]:w-fit [&>input]:flex-1 has-[select[aria-hidden=true]:last-child]:[&>[data-slot=select-trigger]:last-of-type]:rounded-r-md has-[>[data-slot=button-group]]:gap-2",
+  {
+    variants: {
+      orientation: {
+        horizontal:
+          "[&>*:not(:first-child)]:rounded-l-none [&>*:not(:first-child)]:border-l-0 [&>*:not(:last-child)]:rounded-r-none",
+        vertical:
+          "flex-col [&>*:not(:first-child)]:rounded-t-none [&>*:not(:first-child)]:border-t-0 [&>*:not(:last-child)]:rounded-b-none",
+      },
+    },
+    defaultVariants: {
+      orientation: "horizontal",
+    },
+
+===== client/src/components/ui/button.tsx =====
+import * as React from "react";
+import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
+
+import { cn } from "@/lib/utils";
+
+const buttonVariants = cva(
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive:
+          "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+        outline:
+          "border bg-transparent shadow-xs hover:bg-accent dark:bg-transparent dark:border-input dark:hover:bg-input/50",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost:
+          "hover:bg-accent dark:hover:bg-accent/50",
+
+===== client/src/components/ui/calendar.tsx =====
+import * as React from "react";
+import {
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "lucide-react";
+import { DayButton, DayPicker, getDefaultClassNames } from "react-day-picker";
+
+import { cn } from "@/lib/utils";
+import { Button, buttonVariants } from "@/components/ui/button";
+
+function Calendar({
+  className,
+  classNames,
+  showOutsideDays = true,
+  captionLayout = "label",
+  buttonVariant = "ghost",
+  formatters,
+  components,
+  ...props
+
+===== client/src/components/ui/card.tsx =====
+import * as React from "react";
+
+import { cn } from "@/lib/utils";
+
+function Card({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card"
+      className={cn(
+        "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+
+function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+
+===== client/src/components/ui/carousel.tsx =====
+import * as React from "react";
+import useEmblaCarousel, {
+  type UseEmblaCarouselType,
+} from "embla-carousel-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+
+type CarouselApi = UseEmblaCarouselType[1];
+type UseCarouselParameters = Parameters<typeof useEmblaCarousel>;
+type CarouselOptions = UseCarouselParameters[0];
+type CarouselPlugin = UseCarouselParameters[1];
+
+type CarouselProps = {
+  opts?: CarouselOptions;
+  plugins?: CarouselPlugin;
+  orientation?: "horizontal" | "vertical";
+  setApi?: (api: CarouselApi) => void;
+};
+
+===== client/src/components/ui/chart.tsx =====
+import * as React from "react";
+import * as RechartsPrimitive from "recharts";
+
+import { cn } from "@/lib/utils";
+
+// Format: { THEME_NAME: CSS_SELECTOR }
+const THEMES = { light: "", dark: ".dark" } as const;
+
+export type ChartConfig = {
+  [k in string]: {
+    label?: React.ReactNode;
+    icon?: React.ComponentType;
+  } & (
+    | { color?: string; theme?: never }
+    | { color?: never; theme: Record<keyof typeof THEMES, string> }
+  );
+};
+
+type ChartContextProps = {
+  config: ChartConfig;
+
+===== client/src/components/ui/checkbox.tsx =====
+import * as React from "react";
+import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
+import { CheckIcon } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+
+function Checkbox({
+  className,
+  ...props
+}: React.ComponentProps<typeof CheckboxPrimitive.Root>) {
+  return (
+    <CheckboxPrimitive.Root
+      data-slot="checkbox"
+      className={cn(
+        "peer border-input dark:bg-input/30 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground dark:data-[state=checked]:bg-primary data-[state=checked]:border-primary focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive size-4 shrink-0 rounded-[4px] border shadow-xs transition-shadow outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
+        className
+      )}
+      {...props}
+    >
+      <CheckboxPrimitive.Indicator
+
+===== client/src/components/ui/collapsible.tsx =====
+import * as CollapsiblePrimitive from "@radix-ui/react-collapsible";
+
+function Collapsible({
+  ...props
+}: React.ComponentProps<typeof CollapsiblePrimitive.Root>) {
+  return <CollapsiblePrimitive.Root data-slot="collapsible" {...props} />;
+}
+
+function CollapsibleTrigger({
+  ...props
+}: React.ComponentProps<typeof CollapsiblePrimitive.CollapsibleTrigger>) {
+  return (
+    <CollapsiblePrimitive.CollapsibleTrigger
+      data-slot="collapsible-trigger"
+      {...props}
+    />
+  );
+}
+
+function CollapsibleContent({
+
+===== client/src/components/ui/command.tsx =====
+"use client";
+
+import * as React from "react";
+import { Command as CommandPrimitive } from "cmdk";
+import { SearchIcon } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+
+function Command({
+  className,
+  ...props
+}: React.ComponentProps<typeof CommandPrimitive>) {
+  return (
+
+===== client/src/components/ui/context-menu.tsx =====
+import * as React from "react";
+import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
+import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+
+function ContextMenu({
+  ...props
+}: React.ComponentProps<typeof ContextMenuPrimitive.Root>) {
+  return <ContextMenuPrimitive.Root data-slot="context-menu" {...props} />;
+}
+
+function ContextMenuTrigger({
+  ...props
+}: React.ComponentProps<typeof ContextMenuPrimitive.Trigger>) {
+  return (
+    <ContextMenuPrimitive.Trigger data-slot="context-menu-trigger" {...props} />
+  );
+}
+
+
+===== client/src/components/ui/dialog.tsx =====
+import { cn } from "@/lib/utils";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
+import { XIcon } from "lucide-react";
+import * as React from "react";
+
+// Context to track composition state across dialog children
+const DialogCompositionContext = React.createContext<{
+  isComposing: () => boolean;
+  setComposing: (composing: boolean) => void;
+  justEndedComposing: () => boolean;
+  markCompositionEnd: () => void;
+}>({
+  isComposing: () => false,
+  setComposing: () => {},
+  justEndedComposing: () => false,
+  markCompositionEnd: () => {},
+});
+
+export const useDialogComposition = () =>
+  React.useContext(DialogCompositionContext);
+
+===== client/src/components/ui/drawer.tsx =====
+import * as React from "react";
+import { Drawer as DrawerPrimitive } from "vaul";
+
+import { cn } from "@/lib/utils";
+
+function Drawer({
+  ...props
+}: React.ComponentProps<typeof DrawerPrimitive.Root>) {
+  return <DrawerPrimitive.Root data-slot="drawer" {...props} />;
+}
+
+function DrawerTrigger({
+  ...props
+}: React.ComponentProps<typeof DrawerPrimitive.Trigger>) {
+  return <DrawerPrimitive.Trigger data-slot="drawer-trigger" {...props} />;
+}
+
+function DrawerPortal({
+  ...props
+}: React.ComponentProps<typeof DrawerPrimitive.Portal>) {
+
+===== client/src/components/ui/dropdown-menu.tsx =====
+import * as React from "react";
+import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
+import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+
+function DropdownMenu({
+  ...props
+}: React.ComponentProps<typeof DropdownMenuPrimitive.Root>) {
+  return <DropdownMenuPrimitive.Root data-slot="dropdown-menu" {...props} />;
+}
+
+function DropdownMenuPortal({
+  ...props
+}: React.ComponentProps<typeof DropdownMenuPrimitive.Portal>) {
+  return (
+    <DropdownMenuPrimitive.Portal data-slot="dropdown-menu-portal" {...props} />
+  );
+}
+
+
+===== client/src/components/ui/empty.tsx =====
+import { cva, type VariantProps } from "class-variance-authority";
+
+import { cn } from "@/lib/utils";
+
+function Empty({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="empty"
+      className={cn(
+        "flex min-w-0 flex-1 flex-col items-center justify-center gap-6 rounded-lg border-dashed p-6 text-center text-balance md:p-12",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+
+function EmptyHeader({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+
+===== client/src/components/ui/field.tsx =====
+import { useMemo } from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+
+import { cn } from "@/lib/utils";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+
+function FieldSet({ className, ...props }: React.ComponentProps<"fieldset">) {
+  return (
+    <fieldset
+      data-slot="field-set"
+      className={cn(
+        "flex flex-col gap-6",
+        "has-[>[data-slot=checkbox-group]]:gap-3 has-[>[data-slot=radio-group]]:gap-3",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+
+===== client/src/components/ui/form.tsx =====
+"use client";
+
+import * as React from "react";
+import * as LabelPrimitive from "@radix-ui/react-label";
+import { Slot } from "@radix-ui/react-slot";
+import {
+  Controller,
+  FormProvider,
+  useFormContext,
+  useFormState,
+  type ControllerProps,
+  type FieldPath,
+  type FieldValues,
+} from "react-hook-form";
+
+import { cn } from "@/lib/utils";
+import { Label } from "@/components/ui/label";
+
+const Form = FormProvider;
+
+
+===== client/src/components/ui/hover-card.tsx =====
+import * as React from "react";
+import * as HoverCardPrimitive from "@radix-ui/react-hover-card";
+
+import { cn } from "@/lib/utils";
+
+function HoverCard({
+  ...props
+}: React.ComponentProps<typeof HoverCardPrimitive.Root>) {
+  return <HoverCardPrimitive.Root data-slot="hover-card" {...props} />;
+}
+
+function HoverCardTrigger({
+  ...props
+}: React.ComponentProps<typeof HoverCardPrimitive.Trigger>) {
+  return (
+    <HoverCardPrimitive.Trigger data-slot="hover-card-trigger" {...props} />
+  );
+}
+
+function HoverCardContent({
+
+===== client/src/components/ui/input-group.tsx =====
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+
+function InputGroup({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="input-group"
+      role="group"
+      className={cn(
+        "group/input-group border-input dark:bg-input/30 relative flex w-full items-center rounded-md border shadow-xs transition-[color,box-shadow] outline-none",
+        "h-9 min-w-0 has-[>textarea]:h-auto",
+
+        // Variants based on alignment.
+        "has-[>[data-align=inline-start]]:[&>input]:pl-2",
+        "has-[>[data-align=inline-end]]:[&>input]:pr-2",
+
+===== client/src/components/ui/input-otp.tsx =====
+import * as React from "react";
+import { OTPInput, OTPInputContext } from "input-otp";
+import { MinusIcon } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+
+function InputOTP({
+  className,
+  containerClassName,
+  ...props
+}: React.ComponentProps<typeof OTPInput> & {
+  containerClassName?: string;
+}) {
+  return (
+    <OTPInput
+      data-slot="input-otp"
+      containerClassName={cn(
+        "flex items-center gap-2 has-disabled:opacity-50",
+        containerClassName
+      )}
+
+===== client/src/components/ui/input.tsx =====
+import { useDialogComposition } from "@/components/ui/dialog";
+import { useComposition } from "@/hooks/useComposition";
+import { cn } from "@/lib/utils";
+import * as React from "react";
+
+function Input({
+  className,
+  type,
+  onKeyDown,
+  onCompositionStart,
+  onCompositionEnd,
+  ...props
+}: React.ComponentProps<"input">) {
+  // Get dialog composition context if available (will be no-op if not inside Dialog)
+  const dialogComposition = useDialogComposition();
+
+  // Add composition event handlers to support input method editor (IME) for CJK languages.
+  const {
+    onCompositionStart: handleCompositionStart,
+    onCompositionEnd: handleCompositionEnd,
+
+===== client/src/components/ui/item.tsx =====
+import * as React from "react";
+import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
+
+import { cn } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
+
+function ItemGroup({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      role="list"
+      data-slot="item-group"
+      className={cn("group/item-group flex flex-col", className)}
+      {...props}
+    />
+  );
+}
+
+function ItemSeparator({
+  className,
+
+===== client/src/components/ui/kbd.tsx =====
+import { cn } from "@/lib/utils";
+
+function Kbd({ className, ...props }: React.ComponentProps<"kbd">) {
+  return (
+    <kbd
+      data-slot="kbd"
+      className={cn(
+        "bg-muted text-muted-foreground pointer-events-none inline-flex h-5 w-fit min-w-5 items-center justify-center gap-1 rounded-sm px-1 font-sans text-xs font-medium select-none",
+        "[&_svg:not([class*='size-'])]:size-3",
+        "[[data-slot=tooltip-content]_&]:bg-background/20 [[data-slot=tooltip-content]_&]:text-background dark:[[data-slot=tooltip-content]_&]:bg-background/10",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+
+function KbdGroup({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <kbd
+
+===== client/src/components/ui/label.tsx =====
+import * as React from "react";
+import * as LabelPrimitive from "@radix-ui/react-label";
+
+import { cn } from "@/lib/utils";
+
+function Label({
+  className,
+  ...props
+}: React.ComponentProps<typeof LabelPrimitive.Root>) {
+  return (
+    <LabelPrimitive.Root
+      data-slot="label"
+      className={cn(
+        "flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+
+===== client/src/components/ui/menubar.tsx =====
+import * as React from "react";
+import * as MenubarPrimitive from "@radix-ui/react-menubar";
+import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+
+function Menubar({
+  className,
+  ...props
+}: React.ComponentProps<typeof MenubarPrimitive.Root>) {
+  return (
+    <MenubarPrimitive.Root
+      data-slot="menubar"
+      className={cn(
+        "bg-background flex h-9 items-center gap-1 rounded-md border p-1 shadow-xs",
+        className
+      )}
+      {...props}
+    />
+  );
+
+===== client/src/components/ui/navigation-menu.tsx =====
+import * as React from "react";
+import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu";
+import { cva } from "class-variance-authority";
+import { ChevronDownIcon } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+
+function NavigationMenu({
+  className,
+  children,
+  viewport = true,
+  ...props
+}: React.ComponentProps<typeof NavigationMenuPrimitive.Root> & {
+  viewport?: boolean;
+}) {
+  return (
+    <NavigationMenuPrimitive.Root
+      data-slot="navigation-menu"
+      data-viewport={viewport}
+      className={cn(
+
+===== client/src/components/ui/pagination.tsx =====
+import * as React from "react";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  MoreHorizontalIcon,
+} from "lucide-react";
+
+import { cn } from "@/lib/utils";
+import { Button, buttonVariants } from "@/components/ui/button";
+
+function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
+  return (
+    <nav
+      role="navigation"
+      aria-label="pagination"
+      data-slot="pagination"
+      className={cn("mx-auto flex w-full justify-center", className)}
+      {...props}
+    />
+  );
+
+===== client/src/components/ui/popover.tsx =====
+import * as React from "react";
+import * as PopoverPrimitive from "@radix-ui/react-popover";
+
+import { cn } from "@/lib/utils";
+
+function Popover({
+  ...props
+}: React.ComponentProps<typeof PopoverPrimitive.Root>) {
+  return <PopoverPrimitive.Root data-slot="popover" {...props} />;
+}
+
+function PopoverTrigger({
+  ...props
+}: React.ComponentProps<typeof PopoverPrimitive.Trigger>) {
+  return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />;
+}
+
+function PopoverContent({
+  className,
+  align = "center",
+
+===== client/src/components/ui/progress.tsx =====
+import * as React from "react";
+import * as ProgressPrimitive from "@radix-ui/react-progress";
+
+import { cn } from "@/lib/utils";
+
+function Progress({
+  className,
+  value,
+  ...props
+}: React.ComponentProps<typeof ProgressPrimitive.Root>) {
+  return (
+    <ProgressPrimitive.Root
+      data-slot="progress"
+      className={cn(
+        "bg-primary/20 relative h-2 w-full overflow-hidden rounded-full",
+        className
+      )}
+      {...props}
+    >
+      <ProgressPrimitive.Indicator
+
+===== client/src/components/ui/radio-group.tsx =====
+import * as React from "react";
+import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
+import { CircleIcon } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+
+function RadioGroup({
+  className,
+  ...props
+}: React.ComponentProps<typeof RadioGroupPrimitive.Root>) {
+  return (
+    <RadioGroupPrimitive.Root
+      data-slot="radio-group"
+      className={cn("grid gap-3", className)}
+      {...props}
+    />
+  );
+}
+
+function RadioGroupItem({
+
+===== client/src/components/ui/resizable.tsx =====
+import * as React from "react";
+import { GripVerticalIcon } from "lucide-react";
+import * as ResizablePrimitive from "react-resizable-panels";
+
+import { cn } from "@/lib/utils";
+
+function ResizablePanelGroup({
+  className,
+  ...props
+}: React.ComponentProps<typeof ResizablePrimitive.PanelGroup>) {
+  return (
+    <ResizablePrimitive.PanelGroup
+      data-slot="resizable-panel-group"
+      className={cn(
+        "flex h-full w-full data-[panel-group-direction=vertical]:flex-col",
+        className
+      )}
+      {...props}
+    />
+  );
+
+===== client/src/components/ui/scroll-area.tsx =====
+import * as React from "react";
+import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
+
+import { cn } from "@/lib/utils";
+
+function ScrollArea({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<typeof ScrollAreaPrimitive.Root>) {
+  return (
+    <ScrollAreaPrimitive.Root
+      data-slot="scroll-area"
+      className={cn("relative", className)}
+      {...props}
+    >
+      <ScrollAreaPrimitive.Viewport
+        data-slot="scroll-area-viewport"
+        className="focus-visible:ring-ring/50 size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-1"
+      >
+
+===== client/src/components/ui/select.tsx =====
+import * as React from "react";
+import * as SelectPrimitive from "@radix-ui/react-select";
+import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+
+function Select({
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.Root>) {
+  return <SelectPrimitive.Root data-slot="select" {...props} />;
+}
+
+function SelectGroup({
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.Group>) {
+  return <SelectPrimitive.Group data-slot="select-group" {...props} />;
+}
+
+function SelectValue({
+  ...props
+
+===== client/src/components/ui/separator.tsx =====
+import * as React from "react";
+import * as SeparatorPrimitive from "@radix-ui/react-separator";
+
+import { cn } from "@/lib/utils";
+
+function Separator({
+  className,
+  orientation = "horizontal",
+  decorative = true,
+  ...props
+}: React.ComponentProps<typeof SeparatorPrimitive.Root>) {
+  return (
+    <SeparatorPrimitive.Root
+      data-slot="separator"
+      decorative={decorative}
+      orientation={orientation}
+      className={cn(
+        "bg-border shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px",
+        className
+      )}
+
+===== client/src/components/ui/sheet.tsx =====
+"use client";
+
+import * as React from "react";
+import * as SheetPrimitive from "@radix-ui/react-dialog";
+import { XIcon } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+
+function Sheet({ ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) {
+  return <SheetPrimitive.Root data-slot="sheet" {...props} />;
+}
+
+function SheetTrigger({
+  ...props
+}: React.ComponentProps<typeof SheetPrimitive.Trigger>) {
+  return <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props} />;
+}
+
+function SheetClose({
+  ...props
+
+===== client/src/components/ui/sidebar.tsx =====
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useIsMobile } from "@/hooks/useMobile";
+
+===== client/src/components/ui/skeleton.tsx =====
+import { cn } from "@/lib/utils";
+
+function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="skeleton"
+      className={cn("bg-accent animate-pulse rounded-md", className)}
+      {...props}
+    />
+  );
+}
+
+export { Skeleton };
+
+===== client/src/components/ui/slider.tsx =====
+import * as React from "react";
+import * as SliderPrimitive from "@radix-ui/react-slider";
+
+import { cn } from "@/lib/utils";
+
+function Slider({
+  className,
+  defaultValue,
+  value,
+  min = 0,
+  max = 100,
+  ...props
+}: React.ComponentProps<typeof SliderPrimitive.Root>) {
+  const _values = React.useMemo(
+    () =>
+      Array.isArray(value)
+        ? value
+        : Array.isArray(defaultValue)
+          ? defaultValue
+          : [min, max],
+
+===== client/src/components/ui/sonner.tsx =====
+import { useTheme } from "next-themes";
+import { Toaster as Sonner, type ToasterProps } from "sonner";
+
+const Toaster = ({ ...props }: ToasterProps) => {
+  const { theme = "system" } = useTheme();
+
+  return (
+    <Sonner
+      theme={theme as ToasterProps["theme"]}
+      className="toaster group"
+      style={
+        {
+          "--normal-bg": "var(--popover)",
+          "--normal-text": "var(--popover-foreground)",
+          "--normal-border": "var(--border)",
+        } as React.CSSProperties
+      }
+      {...props}
+    />
+  );
+
+===== client/src/components/ui/spinner.tsx =====
+import { Loader2Icon } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+
+function Spinner({ className, ...props }: React.ComponentProps<"svg">) {
+  return (
+    <Loader2Icon
+      role="status"
+      aria-label="Loading"
+      className={cn("size-4 animate-spin", className)}
+      {...props}
+    />
+  );
+}
+
+export { Spinner };
+
+===== client/src/components/ui/switch.tsx =====
+import * as React from "react";
+import * as SwitchPrimitive from "@radix-ui/react-switch";
+
+import { cn } from "@/lib/utils";
+
+function Switch({
+  className,
+  ...props
+}: React.ComponentProps<typeof SwitchPrimitive.Root>) {
+  return (
+    <SwitchPrimitive.Root
+      data-slot="switch"
+      className={cn(
+        "peer data-[state=checked]:bg-primary data-[state=unchecked]:bg-input focus-visible:border-ring focus-visible:ring-ring/50 dark:data-[state=unchecked]:bg-input/80 inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-full border border-transparent shadow-xs transition-all outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
+        className
+      )}
+      {...props}
+    >
+      <SwitchPrimitive.Thumb
+        data-slot="switch-thumb"
+
+===== client/src/components/ui/table.tsx =====
+import * as React from "react";
+
+import { cn } from "@/lib/utils";
+
+function Table({ className, ...props }: React.ComponentProps<"table">) {
+  return (
+    <div
+      data-slot="table-container"
+      className="relative w-full overflow-x-auto"
+    >
+      <table
+        data-slot="table"
+        className={cn("w-full caption-bottom text-sm", className)}
+        {...props}
+      />
+    </div>
+  );
+}
+
+function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
+
+===== client/src/components/ui/tabs.tsx =====
+import * as React from "react";
+import * as TabsPrimitive from "@radix-ui/react-tabs";
+
+import { cn } from "@/lib/utils";
+
+function Tabs({
+  className,
+  ...props
+}: React.ComponentProps<typeof TabsPrimitive.Root>) {
+  return (
+    <TabsPrimitive.Root
+      data-slot="tabs"
+      className={cn("flex flex-col gap-2", className)}
+      {...props}
+    />
+  );
+}
+
+function TabsList({
+  className,
+
+===== client/src/components/ui/textarea.tsx =====
+import { useDialogComposition } from "@/components/ui/dialog";
+import { useComposition } from "@/hooks/useComposition";
+import { cn } from "@/lib/utils";
+import * as React from "react";
+
+function Textarea({
+  className,
+  onKeyDown,
+  onCompositionStart,
+  onCompositionEnd,
+  ...props
+}: React.ComponentProps<"textarea">) {
+  // Get dialog composition context if available (will be no-op if not inside Dialog)
+  const dialogComposition = useDialogComposition();
+
+  // Add composition event handlers to support input method editor (IME) for CJK languages.
+  const {
+    onCompositionStart: handleCompositionStart,
+    onCompositionEnd: handleCompositionEnd,
+    onKeyDown: handleKeyDown,
+
+===== client/src/components/ui/toggle-group.tsx =====
+"use client";
+
+import * as React from "react";
+import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group";
+import { type VariantProps } from "class-variance-authority";
+
+import { cn } from "@/lib/utils";
+import { toggleVariants } from "@/components/ui/toggle";
+
+const ToggleGroupContext = React.createContext<
+  VariantProps<typeof toggleVariants>
+>({
+  size: "default",
+  variant: "default",
+});
+
+function ToggleGroup({
+  className,
+  variant,
+  size,
+
+===== client/src/components/ui/toggle.tsx =====
+import * as React from "react";
+import * as TogglePrimitive from "@radix-ui/react-toggle";
+import { cva, type VariantProps } from "class-variance-authority";
+
+import { cn } from "@/lib/utils";
+
+const toggleVariants = cva(
+  "inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium hover:bg-muted hover:text-muted-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none transition-[color,box-shadow] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive whitespace-nowrap",
+  {
+    variants: {
+      variant: {
+        default: "bg-transparent",
+        outline:
+          "border border-input bg-transparent shadow-xs hover:bg-accent hover:text-accent-foreground",
+      },
+      size: {
+        default: "h-9 px-2 min-w-9",
+        sm: "h-8 px-1.5 min-w-8",
+        lg: "h-10 px-2.5 min-w-10",
+      },
+
+===== client/src/components/ui/tooltip.tsx =====
+import * as React from "react";
+import * as TooltipPrimitive from "@radix-ui/react-tooltip";
+
+import { cn } from "@/lib/utils";
+
+function TooltipProvider({
+  delayDuration = 0,
+  ...props
+}: React.ComponentProps<typeof TooltipPrimitive.Provider>) {
+  return (
+    <TooltipPrimitive.Provider
+      data-slot="tooltip-provider"
+      delayDuration={delayDuration}
+      {...props}
+    />
+  );
+}
+
+function Tooltip({
+  ...props
+
+===== client/src/const.ts =====
+export { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
+
+// Generate login URL at runtime so redirect URI reflects the current origin.
+export const getLoginUrl = () => {
+  const oauthPortalUrl = import.meta.env.VITE_OAUTH_PORTAL_URL;
+  const appId = import.meta.env.VITE_APP_ID;
+  const redirectUri = `${window.location.origin}/api/oauth/callback`;
+  const state = btoa(redirectUri);
+
+  const url = new URL(`${oauthPortalUrl}/app-auth`);
+  url.searchParams.set("appId", appId);
+  url.searchParams.set("redirectUri", redirectUri);
+  url.searchParams.set("state", state);
+  url.searchParams.set("type", "signIn");
+
+  return url.toString();
+};
+
+===== client/src/contexts/ThemeContext.tsx =====
+import React, { createContext, useContext, useEffect, useState } from "react";
+
+type Theme = "light" | "dark";
+
+interface ThemeContextType {
+  theme: Theme;
+  toggleTheme?: () => void;
+  switchable: boolean;
+}
+
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+
+interface ThemeProviderProps {
+  children: React.ReactNode;
+  defaultTheme?: Theme;
+  switchable?: boolean;
+}
+
+export function ThemeProvider({
+  children,
+
+===== client/src/hooks/useComposition.ts =====
+import { useRef } from "react";
+import { usePersistFn } from "./usePersistFn";
+
+export interface UseCompositionReturn<
+  T extends HTMLInputElement | HTMLTextAreaElement,
+> {
+  onCompositionStart: React.CompositionEventHandler<T>;
+  onCompositionEnd: React.CompositionEventHandler<T>;
+  onKeyDown: React.KeyboardEventHandler<T>;
+  isComposing: () => boolean;
+}
+
+export interface UseCompositionOptions<
+  T extends HTMLInputElement | HTMLTextAreaElement,
+> {
+  onKeyDown?: React.KeyboardEventHandler<T>;
+  onCompositionStart?: React.CompositionEventHandler<T>;
+  onCompositionEnd?: React.CompositionEventHandler<T>;
+}
+
+
+===== client/src/hooks/useMobile.tsx =====
+import * as React from "react";
+
+const MOBILE_BREAKPOINT = 768;
+
+export function useIsMobile() {
+  const [isMobile, setIsMobile] = React.useState<boolean | undefined>(
+    undefined
+  );
+
+  React.useEffect(() => {
+    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
+    const onChange = () => {
+      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
+    };
+    mql.addEventListener("change", onChange);
+    setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
+    return () => mql.removeEventListener("change", onChange);
+  }, []);
+
+  return !!isMobile;
+
+===== client/src/hooks/usePersistFn.ts =====
+import { useRef } from "react";
+
+type noop = (...args: any[]) => any;
+
+/**
+ * usePersistFn instead of useCallback to reduce cognitive load
+ */
+export function usePersistFn<T extends noop>(fn: T) {
+  const fnRef = useRef<T>(fn);
+  fnRef.current = fn;
+
+  const persistFn = useRef<T>(null);
+  if (!persistFn.current) {
+    persistFn.current = function (this: unknown, ...args) {
+      return fnRef.current!.apply(this, args);
+    } as T;
+  }
+
+  return persistFn.current!;
+}
+
+===== client/src/index.css =====
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+===== client/src/lib/trpc.ts =====
+import { createTRPCReact } from "@trpc/react-query";
+import type { AppRouter } from "../../../server/routers";
+
+export const trpc = createTRPCReact<AppRouter>();
+
+===== client/src/lib/utils.ts =====
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+===== client/src/main.tsx =====
+import { trpc } from "@/lib/trpc";
+import { UNAUTHED_ERR_MSG } from '@shared/const';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { httpBatchLink, TRPCClientError } from "@trpc/client";
+import { createRoot } from "react-dom/client";
+import superjson from "superjson";
+import App from "./App";
+import { getLoginUrl } from "./const";
+import "./index.css";
+
+const queryClient = new QueryClient();
+
+const redirectToLoginIfUnauthorized = (error: unknown) => {
+  if (!(error instanceof TRPCClientError)) return;
+  if (typeof window === "undefined") return;
+
+  const isUnauthorized = error.message === UNAUTHED_ERR_MSG;
+
+  if (!isUnauthorized) return;
+
+
+===== client/src/pages/Calendar.tsx =====
+import { useState, useEffect } from "react";
+import { trpc } from "@/lib/trpc";
+import DashboardLayout from "@/components/DashboardLayoutBrutalist";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { Plus, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay } from "date-fns";
+
+export default function Calendar() {
+  const [events, setEvents] = useState<any[]>([]);
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [showForm, setShowForm] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    location: "",
+    startTime: "",
+    endTime: "",
+
+===== client/src/pages/Chat.tsx =====
+import { useState, useEffect, useRef } from "react";
+import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
+import DashboardLayout from "@/components/DashboardLayoutBrutalist";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { Loader2, Send, Plus, Trash2, Copy, Download } from "lucide-react";
+import { Streamdown } from "streamdown";
+import { toast } from "sonner";
+
+export default function Chat() {
+  const { user } = useAuth();
+  const [conversations, setConversations] = useState<any[]>([]);
+  const [selectedConversation, setSelectedConversation] = useState<number | null>(null);
+  const [messages, setMessages] = useState<any[]>([]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+===== client/src/pages/ChatEnhanced.tsx =====
+import { useState, useEffect, useRef } from "react";
+import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
+import DashboardLayout from "@/components/DashboardLayoutBrutalist";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { Loader2, Send, Plus, AlertTriangle, TrendingUp, Brain } from "lucide-react";
+import { Streamdown } from "streamdown";
+import { toast } from "sonner";
+
+export default function ChatEnhanced() {
+  const { user } = useAuth();
+  const [conversations, setConversations] = useState<any[]>([]);
+  const [selectedConversation, setSelectedConversation] = useState<number | null>(null);
+  const [messages, setMessages] = useState<any[]>([]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [stressLevel, setStressLevel] = useState(0);
+  const [riskLevel, setRiskLevel] = useState(0);
+
+===== client/src/pages/ComponentShowcase.tsx =====
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+
+===== client/src/pages/Habits.tsx =====
+import { useState, useEffect } from "react";
+import { trpc } from "@/lib/trpc";
+import DashboardLayout from "@/components/DashboardLayoutBrutalist";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { Plus, Trash2, CheckCircle2, Flame } from "lucide-react";
+import { toast } from "sonner";
+
+export default function Habits() {
+  const [habits, setHabits] = useState<any[]>([]);
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    frequency: "daily" as "daily" | "weekly" | "monthly",
+  });
+
+  const habitsQuery = trpc.habits.list.useQuery();
+  const createMutation = trpc.habits.create.useMutation();
+
+
+===== client/src/pages/Home.tsx =====
+import { useAuth } from "@/_core/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import { useLocation } from "wouter";
+import { MessageSquare, Calendar, CheckSquare, Zap, Lightbulb, Bell, ArrowRight, ChefHat, Utensils } from "lucide-react";
+import { getLoginUrl } from "@/const";
+
+export default function Home() {
+  const { user, isAuthenticated, loading } = useAuth();
+  const [, setLocation] = useLocation();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-4xl font-black uppercase mb-4">LIFEAX</div>
+          <div className="text-sm font-bold uppercase text-muted-foreground">Loading...</div>
+        </div>
+      </div>
+    );
+  }
+
+===== client/src/pages/MealPlanning.tsx =====
+import { useState } from "react";
+import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
+import DashboardLayout from "@/components/DashboardLayoutBrutalist";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Loader2, Plus, ShoppingCart, ChefHat, Calendar } from "lucide-react";
+import { toast } from "sonner";
+
+export default function MealPlanning() {
+  const { user } = useAuth();
+  const [mealPlans, setMealPlans] = useState<any[]>([]);
+  const [selectedPlan, setSelectedPlan] = useState<number | null>(null);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showGenerateForm, setShowGenerateForm] = useState(false);
+  const [shoppingList, setShoppingList] = useState<any[]>([]);
+  const [totalCost, setTotalCost] = useState(0);
+
+
+===== client/src/pages/MealPrep.tsx =====
+import { useState } from "react";
+import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
+import DashboardLayout from "@/components/DashboardLayoutBrutalist";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Plus,
+  Clock,
+  CheckCircle2,
+  AlertCircle,
+  Trash2,
+  Edit2,
+  Play,
+  Pause,
+  ChefHat,
+  Calendar,
+  Zap,
+
+===== client/src/pages/NotFound.tsx =====
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { AlertCircle, Home } from "lucide-react";
+import { useLocation } from "wouter";
+
+export default function NotFound() {
+  const [, setLocation] = useLocation();
+
+  const handleGoHome = () => {
+    setLocation("/");
+  };
+
+  return (
+    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
+      <Card className="w-full max-w-lg mx-4 shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+        <CardContent className="pt-8 pb-8 text-center">
+          <div className="flex justify-center mb-6">
+            <div className="relative">
+              <div className="absolute inset-0 bg-red-100 rounded-full animate-pulse" />
+              <AlertCircle className="relative h-16 w-16 text-red-500" />
+
+===== client/src/pages/Notifications.tsx =====
+import { useState, useEffect } from "react";
+import { trpc } from "@/lib/trpc";
+import DashboardLayout from "@/components/DashboardLayoutBrutalist";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Bell, CheckCircle2, Zap, Target, Lightbulb, Trash2 } from "lucide-react";
+import { format } from "date-fns";
+
+export default function Notifications() {
+  const [notifications, setNotifications] = useState<any[]>([]);
+
+  const notificationsQuery = trpc.notifications.list.useQuery();
+  const markAsReadMutation = trpc.notifications.markAsRead.useMutation();
+  const recommendationsQuery = trpc.recommendations.list.useQuery();
+  const generateRecommendationsMutation = trpc.recommendations.generate.useQuery();
+
+  useEffect(() => {
+    if (notificationsQuery.data) {
+      setNotifications(notificationsQuery.data);
+    }
+
+===== client/src/pages/Profile.tsx =====
+import { useState } from "react";
+import { useAuth } from "@/_core/hooks/useAuth";
+import DashboardLayout from "@/components/DashboardLayoutBrutalist";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { User, Settings, Bell, Lock, LogOut } from "lucide-react";
+import { toast } from "sonner";
+
+export default function Profile() {
+  const { user, logout } = useAuth();
+  const [activeTab, setActiveTab] = useState<"profile" | "settings" | "notifications">("profile");
+  const [profileData, setProfileData] = useState({
+    name: user?.name || "",
+    email: user?.email || "",
+  });
+  const [settings, setSettings] = useState({
+    theme: "dark",
+    notifications: true,
+    emailUpdates: true,
+
+===== client/src/pages/Tasks.tsx =====
+import { useState, useEffect } from "react";
+import { trpc } from "@/lib/trpc";
+import DashboardLayout from "@/components/DashboardLayoutBrutalist";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { Plus, Trash2, CheckCircle2, Circle } from "lucide-react";
+import { format } from "date-fns";
+
+export default function Tasks() {
+  const [tasks, setTasks] = useState<any[]>([]);
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    priority: "medium" as "low" | "medium" | "high",
+    dueDate: "",
+  });
+
+  const tasksQuery = trpc.tasks.list.useQuery();
+
+===== client/src/pages/TasksEnhanced.tsx =====
+import { useState, useEffect } from "react";
+import { trpc } from "@/lib/trpc";
+import DashboardLayout from "@/components/DashboardLayoutBrutalist";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { Plus, Trash2, CheckCircle2, Circle, Filter, LayoutGrid, List } from "lucide-react";
+import { format } from "date-fns";
+import { toast } from "sonner";
+
+type ViewMode = "list" | "kanban";
+type PriorityFilter = "all" | "high" | "medium" | "low";
+
+export default function TasksEnhanced() {
+  const [tasks, setTasks] = useState<any[]>([]);
+  const [showForm, setShowForm] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>("list");
+  const [priorityFilter, setPriorityFilter] = useState<PriorityFilter>("all");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [formData, setFormData] = useState({
+
+===== server/_core/context.ts =====
+import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
+import type { User } from "../../drizzle/schema";
+import { sdk } from "./sdk";
+
+export type TrpcContext = {
+  req: CreateExpressContextOptions["req"];
+  res: CreateExpressContextOptions["res"];
+  user: User | null;
+};
+
+export async function createContext(
+  opts: CreateExpressContextOptions
+): Promise<TrpcContext> {
+  let user: User | null = null;
+
+  try {
+    user = await sdk.authenticateRequest(opts.req);
+  } catch (error) {
+    // Authentication is optional for public procedures.
+    user = null;
+
+===== server/_core/cookies.ts =====
+import type { CookieOptions, Request } from "express";
+
+const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "::1"]);
+
+function isIpAddress(host: string) {
+  // Basic IPv4 check and IPv6 presence detection.
+  if (/^\d{1,3}(\.\d{1,3}){3}$/.test(host)) return true;
+  return host.includes(":");
+}
+
+function isSecureRequest(req: Request) {
+  if (req.protocol === "https") return true;
+
+  const forwardedProto = req.headers["x-forwarded-proto"];
+  if (!forwardedProto) return false;
+
+  const protoList = Array.isArray(forwardedProto)
+    ? forwardedProto
+    : forwardedProto.split(",");
+
+
+===== server/_core/dataApi.ts =====
+/**
+ * Quick example (matches curl usage):
+ *   await callDataApi("Youtube/search", {
+ *     query: { gl: "US", hl: "en", q: "manus" },
+ *   })
+ */
+import { ENV } from "./env";
+
+export type DataApiCallOptions = {
+  query?: Record<string, unknown>;
+  body?: Record<string, unknown>;
+  pathParams?: Record<string, unknown>;
+  formData?: Record<string, unknown>;
+};
+
+export async function callDataApi(
+  apiId: string,
+  options: DataApiCallOptions = {}
+): Promise<unknown> {
+  if (!ENV.forgeApiUrl) {
+
+===== server/_core/env.ts =====
+export const ENV = {
+  appId: process.env.VITE_APP_ID ?? "",
+  cookieSecret: process.env.JWT_SECRET ?? "",
+  databaseUrl: process.env.DATABASE_URL ?? "",
+  oAuthServerUrl: process.env.OAUTH_SERVER_URL ?? "",
+  ownerOpenId: process.env.OWNER_OPEN_ID ?? "",
+  isProduction: process.env.NODE_ENV === "production",
+  forgeApiUrl: process.env.BUILT_IN_FORGE_API_URL ?? "",
+  forgeApiKey: process.env.BUILT_IN_FORGE_API_KEY ?? "",
+};
+
+===== server/_core/imageGeneration.ts =====
+/**
+ * Image generation helper using internal ImageService
+ *
+ * Example usage:
+ *   const { url: imageUrl } = await generateImage({
+ *     prompt: "A serene landscape with mountains"
+ *   });
+ *
+ * For editing:
+ *   const { url: imageUrl } = await generateImage({
+ *     prompt: "Add a rainbow to this landscape",
+ *     originalImages: [{
+ *       url: "https://example.com/original.jpg",
+ *       mimeType: "image/jpeg"
+ *     }]
+ *   });
+ */
+import { storagePut } from "server/storage";
+import { ENV } from "./env";
+
+
+===== server/_core/index.ts =====
+import "dotenv/config";
+import express from "express";
+import { createServer } from "http";
+import net from "net";
+import { createExpressMiddleware } from "@trpc/server/adapters/express";
+import { registerOAuthRoutes } from "./oauth";
+import { appRouter } from "../routers";
+import { createContext } from "./context";
+import { serveStatic, setupVite } from "./vite";
+
+function isPortAvailable(port: number): Promise<boolean> {
+  return new Promise(resolve => {
+    const server = net.createServer();
+    server.listen(port, () => {
+      server.close(() => resolve(true));
+    });
+    server.on("error", () => resolve(false));
+  });
+}
+
+
+===== server/_core/llm.ts =====
+import { ENV } from "./env";
+
+export type Role = "system" | "user" | "assistant" | "tool" | "function";
+
+export type TextContent = {
+  type: "text";
+  text: string;
+};
+
+export type ImageContent = {
+  type: "image_url";
+  image_url: {
+    url: string;
+    detail?: "auto" | "low" | "high";
+  };
+};
+
+export type FileContent = {
+  type: "file_url";
+  file_url: {
+
+===== server/_core/map.ts =====
+/**
+ * Google Maps API Integration for Manus WebDev Templates
+ * 
+ * Main function: makeRequest<T>(endpoint, params) - Makes authenticated requests to Google Maps APIs
+ * All credentials are automatically injected. Array parameters use | as separator.
+ * 
+ * See API examples below the type definitions for usage patterns.
+ */
+
+import { ENV } from "./env";
+
+// ============================================================================
+// Configuration
+// ============================================================================
+
+type MapsConfig = {
+  baseUrl: string;
+  apiKey: string;
+};
+
+
+===== server/_core/notification.ts =====
+import { TRPCError } from "@trpc/server";
+import { ENV } from "./env";
+
+export type NotificationPayload = {
+  title: string;
+  content: string;
+};
+
+const TITLE_MAX_LENGTH = 1200;
+const CONTENT_MAX_LENGTH = 20000;
+
+const trimValue = (value: string): string => value.trim();
+const isNonEmptyString = (value: unknown): value is string =>
+  typeof value === "string" && value.trim().length > 0;
+
+const buildEndpointUrl = (baseUrl: string): string => {
+  const normalizedBase = baseUrl.endsWith("/")
+    ? baseUrl
+    : `${baseUrl}/`;
+  return new URL(
+
+===== server/_core/oauth.ts =====
+import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
+import type { Express, Request, Response } from "express";
+import * as db from "../db";
+import { getSessionCookieOptions } from "./cookies";
+import { sdk } from "./sdk";
+
+function getQueryParam(req: Request, key: string): string | undefined {
+  const value = req.query[key];
+  return typeof value === "string" ? value : undefined;
+}
+
+export function registerOAuthRoutes(app: Express) {
+  app.get("/api/oauth/callback", async (req: Request, res: Response) => {
+    const code = getQueryParam(req, "code");
+    const state = getQueryParam(req, "state");
+
+    if (!code || !state) {
+      res.status(400).json({ error: "code and state are required" });
+      return;
+    }
+
+===== server/_core/sdk.ts =====
+import { AXIOS_TIMEOUT_MS, COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
+import { ForbiddenError } from "@shared/_core/errors";
+import axios, { type AxiosInstance } from "axios";
+import { parse as parseCookieHeader } from "cookie";
+import type { Request } from "express";
+import { SignJWT, jwtVerify } from "jose";
+import type { User } from "../../drizzle/schema";
+import * as db from "../db";
+import { ENV } from "./env";
+import type {
+  ExchangeTokenRequest,
+  ExchangeTokenResponse,
+  GetUserInfoResponse,
+  GetUserInfoWithJwtRequest,
+  GetUserInfoWithJwtResponse,
+} from "./types/manusTypes";
+// Utility function
+const isNonEmptyString = (value: unknown): value is string =>
+  typeof value === "string" && value.length > 0;
+
+
+===== server/_core/systemRouter.ts =====
+import { z } from "zod";
+import { notifyOwner } from "./notification";
+import { adminProcedure, publicProcedure, router } from "./trpc";
+
+export const systemRouter = router({
+  health: publicProcedure
+    .input(
+      z.object({
+        timestamp: z.number().min(0, "timestamp cannot be negative"),
+      })
+    )
+    .query(() => ({
+      ok: true,
+    })),
+
+  notifyOwner: adminProcedure
+    .input(
+      z.object({
+        title: z.string().min(1, "title is required"),
+        content: z.string().min(1, "content is required"),
+
+===== server/_core/trpc.ts =====
+import { NOT_ADMIN_ERR_MSG, UNAUTHED_ERR_MSG } from '@shared/const';
+import { initTRPC, TRPCError } from "@trpc/server";
+import superjson from "superjson";
+import type { TrpcContext } from "./context";
+
+const t = initTRPC.context<TrpcContext>().create({
+  transformer: superjson,
+});
+
+export const router = t.router;
+export const publicProcedure = t.procedure;
+
+const requireUser = t.middleware(async opts => {
+  const { ctx, next } = opts;
+
+  if (!ctx.user) {
+    throw new TRPCError({ code: "UNAUTHORIZED", message: UNAUTHED_ERR_MSG });
+  }
+
+  return next({
+
+===== server/_core/types/cookie.d.ts =====
+declare module "cookie" {
+  export function parse(
+    str: string,
+    options?: Record<string, unknown>
+  ): Record<string, string>;
+}
+
+===== server/_core/types/manusTypes.ts =====
+// WebDev Auth TypeScript types
+// Auto-generated from protobuf definitions
+// Generated on: 2025-09-24T05:57:57.338Z
+
+export interface AuthorizeRequest {
+  redirectUri: string;
+  projectId: string;
+  state: string;
+  responseType: string;
+  scope: string;
+}
+
+export interface AuthorizeResponse {
+  redirectUrl: string;
+}
+
+export interface ExchangeTokenRequest {
+  grantType: string;
+  code: string;
+  refreshToken?: string;
+
+===== server/_core/vite.ts =====
+import express, { type Express } from "express";
+import fs from "fs";
+import { type Server } from "http";
+import { nanoid } from "nanoid";
+import path from "path";
+import { createServer as createViteServer } from "vite";
+import viteConfig from "../../vite.config";
+
+export async function setupVite(app: Express, server: Server) {
+  const serverOptions = {
+    middlewareMode: true,
+    hmr: { server },
+    allowedHosts: true as const,
+  };
+
+  const vite = await createViteServer({
+    ...viteConfig,
+    configFile: false,
+    server: serverOptions,
+    appType: "custom",
+
+===== server/_core/voiceTranscription.ts =====
+/**
+ * Voice transcription helper using internal Speech-to-Text service
+ *
+ * Frontend implementation guide:
+ * 1. Capture audio using MediaRecorder API
+ * 2. Upload audio to storage (e.g., S3) to get URL
+ * 3. Call transcription with the URL
+ * 
+ * Example usage:
+ * ```tsx
+ * // Frontend component
+ * const transcribeMutation = trpc.voice.transcribe.useMutation({
+ *   onSuccess: (data) => {
+ *     console.log(data.text); // Full transcription
+ *     console.log(data.language); // Detected language
+ *     console.log(data.segments); // Timestamped segments
+ *   }
+ * });
+ * 
+ * // After uploading audio to storage
+
+===== server/db-enhanced.ts =====
+import { eq } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/mysql2";
+import { 
+  conversationAnalysis, 
+  mealPlans, 
+  mealPlanDays, 
+  recipes, 
+  shoppingListItems,
+  InsertConversationAnalysis,
+  InsertMealPlan,
+  InsertMealPlanDay,
+  InsertRecipe,
+  InsertShoppingListItem
+} from "../drizzle/schema";
+import { getDb } from "./db";
+
+// Emotional Intelligence Functions
+
+export async function analyzeConversation(
+  conversationId: number,
+
+===== server/db-meal-prep.ts =====
+import { eq } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/mysql2";
+import {
+  mealPrepSessions,
+  mealPrepChecklist,
+  mealPrepProgress,
+  mealPrepContainers,
+  InsertMealPrepSession,
+  InsertMealPrepChecklist,
+  InsertMealPrepProgress,
+  InsertMealPrepContainer,
+} from "../drizzle/schema";
+import { getDb } from "./db";
+
+// Meal Prep Sessions
+
+export async function createMealPrepSession(
+  userId: number,
+  title: string,
+  date: Date,
+
+===== server/db.ts =====
+import { eq, desc } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/mysql2";
+import { InsertUser, users, conversations, messages, tasks, calendarEvents, notifications, habits, recommendations, Conversation, Message, Task, CalendarEvent, Notification, Habit, Recommendation, InsertConversation, InsertMessage, InsertTask, InsertCalendarEvent, InsertNotification, InsertHabit, InsertRecommendation } from "../drizzle/schema";
+import { ENV } from './_core/env';
+
+let _db: ReturnType<typeof drizzle> | null = null;
+
+// Lazily create the drizzle instance so local tooling can run without a DB.
+export async function getDb() {
+  if (!_db && process.env.DATABASE_URL) {
+    try {
+      _db = drizzle(process.env.DATABASE_URL);
+    } catch (error) {
+      console.warn("[Database] Failed to connect:", error);
+      _db = null;
+    }
+  }
+  return _db;
+}
+
+
+===== server/routers-enhanced.ts =====
+import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
+import { z } from "zod";
+import { invokeLLM } from "./_core/llm";
+import { TRPCError } from "@trpc/server";
+import {
+  analyzeConversation,
+  createMealPlan,
+  getMealPlans,
+  addShoppingListItem,
+  getShoppingList,
+  getShoppingListTotal,
+} from "./db-enhanced";
+
+export const emotionalIntelligenceRouter = router({
+  analyzeConversation: protectedProcedure
+    .input(
+      z.object({
+        conversationId: z.number(),
+        stressLevel: z.number().min(0).max(100),
+        riskLevel: z.number().min(0).max(100),
+
+===== server/routers-meal-prep.ts =====
+import { protectedProcedure, router } from "./_core/trpc";
+import { z } from "zod";
+import {
+  createMealPrepSession,
+  getMealPrepSessions,
+  getMealPrepSessionDetails,
+  updateMealPrepSessionStatus,
+  addChecklistItem,
+  completeChecklistItem,
+  createMealPrepProgress,
+  updateMealPrepProgress,
+  createMealPrepContainer,
+  getMealPrepContainers,
+  updateContainerLocation,
+  deleteContainer,
+} from "./db-meal-prep";
+
+export const mealPrepRouter = router({
+  createSession: protectedProcedure
+    .input(
+
+===== server/routers.ts =====
+import { COOKIE_NAME } from "@shared/const";
+import { getSessionCookieOptions } from "./_core/cookies";
+import { systemRouter } from "./_core/systemRouter";
+import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
+import { z } from "zod";
+import { 
+  createConversation, getConversations, addMessage, getMessages,
+  createTask, getTasks, updateTask, deleteTask,
+  createCalendarEvent, getCalendarEvents, updateCalendarEvent, deleteCalendarEvent,
+  createNotification, getNotifications, markNotificationAsRead,
+  createHabit, getHabits,
+  createRecommendation, getRecommendations
+} from "./db";
+import {
+  analyzeConversation, getConversationAnalysis,
+  createMealPlan, getMealPlans, getMealPlanDetails, addMealPlanDay,
+  addRecipe, getRecipes, addShoppingListItem, getShoppingList, markShoppingItemPurchased, getShoppingListTotal
+} from "./db-enhanced";
+import { invokeLLM } from "./_core/llm";
+import { TRPCError } from "@trpc/server";
+
+===== server/storage.ts =====
+// Preconfigured storage helpers for Manus WebDev templates
+// Uses the Biz-provided storage proxy (Authorization: Bearer <token>)
+
+import { ENV } from './_core/env';
+
+type StorageConfig = { baseUrl: string; apiKey: string };
+
+function getStorageConfig(): StorageConfig {
+  const baseUrl = ENV.forgeApiUrl;
+  const apiKey = ENV.forgeApiKey;
+
+  if (!baseUrl || !apiKey) {
+    throw new Error(
+      "Storage proxy credentials missing: set BUILT_IN_FORGE_API_URL and BUILT_IN_FORGE_API_KEY"
+    );
+  }
+
+  return { baseUrl: baseUrl.replace(/\/+$/, ""), apiKey };
+}
+
+
+===== shared/_core/errors.ts =====
+/**
+ * Base HTTP error class with status code.
+ * Throw this from route handlers to send specific HTTP errors.
+ */
+export class HttpError extends Error {
+  constructor(
+    public statusCode: number,
+    message: string
+  ) {
+    super(message);
+    this.name = "HttpError";
+  }
+}
+
+// Convenience constructors
+export const BadRequestError = (msg: string) => new HttpError(400, msg);
+export const UnauthorizedError = (msg: string) => new HttpError(401, msg);
+export const ForbiddenError = (msg: string) => new HttpError(403, msg);
+export const NotFoundError = (msg: string) => new HttpError(404, msg);
+
+===== shared/const.ts =====
+export const COOKIE_NAME = "app_session_id";
+export const ONE_YEAR_MS = 1000 * 60 * 60 * 24 * 365;
+export const AXIOS_TIMEOUT_MS = 30_000;
+export const UNAUTHED_ERR_MSG = 'Please login (10001)';
+export const NOT_ADMIN_ERR_MSG = 'You do not have required permission (10002)';
+
+===== shared/types.ts =====
+/**
+ * Unified type exports
+ * Import shared types from this single entry point.
+ */
+
+export type * from "../drizzle/schema";
+export * from "./_core/errors";
+
+===== drizzle/0000_fancy_tattoo.sql =====
+CREATE TABLE `users` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`openId` varchar(64) NOT NULL,
+	`name` text,
+	`email` varchar(320),
+	`loginMethod` varchar(64),
+	`role` enum('user','admin') NOT NULL DEFAULT 'user',
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+	`lastSignedIn` timestamp NOT NULL DEFAULT (now()),
+	CONSTRAINT `users_id` PRIMARY KEY(`id`),
+	CONSTRAINT `users_openId_unique` UNIQUE(`openId`)
+);
+
+===== drizzle/0001_bored_fantastic_four.sql =====
+CREATE TABLE `calendar_events` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`userId` int NOT NULL,
+	`title` varchar(255) NOT NULL,
+	`description` text,
+	`startTime` timestamp NOT NULL,
+	`endTime` timestamp NOT NULL,
+	`location` varchar(255),
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+	CONSTRAINT `calendar_events_id` PRIMARY KEY(`id`)
+);
+--> statement-breakpoint
+CREATE TABLE `conversations` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`userId` int NOT NULL,
+	`title` varchar(255) NOT NULL,
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+	CONSTRAINT `conversations_id` PRIMARY KEY(`id`)
+
+===== drizzle/0002_black_calypso.sql =====
+CREATE TABLE `conversation_analysis` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`conversationId` int NOT NULL,
+	`userId` int NOT NULL,
+	`stressLevel` int NOT NULL DEFAULT 0,
+	`riskLevel` int NOT NULL DEFAULT 0,
+	`sentiment` varchar(50) NOT NULL,
+	`emotionalKeywords` text,
+	`decisionRisks` text,
+	`interventionNeeded` int NOT NULL DEFAULT 0,
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	CONSTRAINT `conversation_analysis_id` PRIMARY KEY(`id`)
+);
+--> statement-breakpoint
+CREATE TABLE `meal_plan_days` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`mealPlanId` int NOT NULL,
+	`dayOfWeek` int NOT NULL,
+	`date` timestamp NOT NULL,
+	`breakfast` text,
+
+===== drizzle/0003_nosy_killmonger.sql =====
+CREATE TABLE `meal_prep_checklist` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`sessionId` int NOT NULL,
+	`task` varchar(255) NOT NULL,
+	`completed` int NOT NULL DEFAULT 0,
+	`order` int NOT NULL,
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	CONSTRAINT `meal_prep_checklist_id` PRIMARY KEY(`id`)
+);
+--> statement-breakpoint
+CREATE TABLE `meal_prep_containers` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`userId` int NOT NULL,
+	`mealName` varchar(255) NOT NULL,
+	`quantity` int NOT NULL,
+	`containerType` varchar(100) NOT NULL,
+	`prepDate` timestamp NOT NULL,
+	`expiryDate` timestamp NOT NULL,
+	`location` varchar(100) NOT NULL,
+	`notes` text,
+
+===== drizzle/meta/0000_snapshot.json =====
+{
+  "version": "5",
+  "dialect": "mysql",
+  "id": "666baee6-c90e-41fd-acf9-be69ff31a659",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "tables": {
+    "users": {
+      "name": "users",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "openId": {
+          "name": "openId",
+          "type": "varchar(64)",
+          "primaryKey": false,
+
+===== drizzle/meta/0001_snapshot.json =====
+{
+  "version": "5",
+  "dialect": "mysql",
+  "id": "f1922321-9b4d-48e4-9b81-4dc71572b352",
+  "prevId": "666baee6-c90e-41fd-acf9-be69ff31a659",
+  "tables": {
+    "calendar_events": {
+      "name": "calendar_events",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "int",
+          "primaryKey": false,
+
+===== drizzle/meta/0002_snapshot.json =====
+{
+  "version": "5",
+  "dialect": "mysql",
+  "id": "70a62b99-1f3d-4dbb-a078-db515cfe682e",
+  "prevId": "f1922321-9b4d-48e4-9b81-4dc71572b352",
+  "tables": {
+    "calendar_events": {
+      "name": "calendar_events",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "int",
+          "primaryKey": false,
+
+===== drizzle/meta/0003_snapshot.json =====
+{
+  "version": "5",
+  "dialect": "mysql",
+  "id": "df04b0fd-c569-4131-bad2-4674ea313197",
+  "prevId": "70a62b99-1f3d-4dbb-a078-db515cfe682e",
+  "tables": {
+    "calendar_events": {
+      "name": "calendar_events",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "int",
+          "primaryKey": false,
+
+===== drizzle/meta/_journal.json =====
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1769273266045,
+      "tag": "0000_fancy_tattoo",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1769273439070,
+      "tag": "0001_bored_fantastic_four",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+
+===== drizzle/migrations/.gitkeep =====
+
+===== drizzle/relations.ts =====
+import {} from "./schema";
+
+===== drizzle/schema.ts =====
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+
+/**
+ * Core user table backing auth flow.
+ * Extend this file with additional tables as your product grows.
+ * Columns use camelCase to match both database fields and generated types.
+ */
+export const users = mysqlTable("users", {
+  /**
+   * Surrogate primary key. Auto-incremented numeric value managed by the database.
+   * Use this for relations between tables.
+   */
+  id: int("id").autoincrement().primaryKey(),
+  /** Manus OAuth identifier (openId) returned from the OAuth callback. Unique per user. */
+  openId: varchar("openId", { length: 64 }).notNull().unique(),
+  name: text("name"),
+  email: varchar("email", { length: 320 }),
+  loginMethod: varchar("loginMethod", { length: 64 }),
+  role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+

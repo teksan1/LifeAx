@@ -1,3 +1,7 @@
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 /**
  * Image generation helper using internal ImageService
  *
@@ -15,7 +19,7 @@
  *     }]
  *   });
  */
-import { storagePut } from "server/storage";
+import { storagePut } from "./storage";
 import { ENV } from "./env";
 
 export type GenerateImageOptions = {

@@ -1,3 +1,7 @@
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 import { eq, desc } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { InsertUser, users, conversations, messages, tasks, calendarEvents, notifications, habits, recommendations, Conversation, Message, Task, CalendarEvent, Notification, Habit, Recommendation, InsertConversation, InsertMessage, InsertTask, InsertCalendarEvent, InsertNotification, InsertHabit, InsertRecommendation } from "../drizzle/schema";

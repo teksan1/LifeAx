@@ -1,3 +1,7 @@
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 // WebDev Auth TypeScript types
 // Auto-generated from protobuf definitions
 // Generated on: 2025-09-24T05:57:57.338Z
